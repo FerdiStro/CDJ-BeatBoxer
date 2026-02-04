@@ -13,6 +13,7 @@ public class NetWorkInfo {
     private static NetWorkInfo INSTANCE = null;
 
     private NetWorkInfo() {
+        System.setProperty("java.net.preferIPv4Stack", "true");
         this.scan();
     }
 
