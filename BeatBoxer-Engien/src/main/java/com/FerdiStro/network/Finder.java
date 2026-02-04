@@ -49,6 +49,7 @@ public class Finder {
                     deviceFound = true;
                     this.deviceAnnouncements = deviceFinder.getCurrentDevices();
                     log.info("Devices found");
+                    break;
                 }
                 cdjAttempts++;
                 log.info("Not found, retry again");
