@@ -37,7 +37,7 @@ public class NetWorkInfo {
             while (interfaces.hasMoreElements()) {
                 NetworkInterface ni = interfaces.nextElement();
                 if (ni.isUp() && !ni.isLoopback()) {
-                    if (ni.getName().equals("en0") && ni.supportsMulticast()) {
+                    if (ni.getName().equals("eth0") && ni.supportsMulticast()) {
                         this.status = true;
                     }
                     log.info("Interface: {}", ni.getName());
