@@ -22,4 +22,8 @@ dependencies {
 }
 
 
+application {
+  mainClass = "com.FerdiStro.Main"
+}
+
 tasks.test { useJUnitPlatform() }
