@@ -2,16 +2,14 @@ package com.FerdiStro.cdj.modes;
 
 
 import com.FerdiStro.cdj.VirtualDevice;
-import org.deepsymmetry.beatlink.Beat;
-import org.deepsymmetry.beatlink.BeatListener;
 
-public class ConnectMode extends  AbstractMode{
+public class ConnectMode extends AbstractMode {
 
 
     private static final String MODE_NAME = "CDJ-connect-mode";
 
 
-    public ConnectMode(){
+    public ConnectMode() {
         super.printStartUpSequence();
     }
 
@@ -23,12 +21,7 @@ public class ConnectMode extends  AbstractMode{
     @Override
     public void startUp() {
         VirtualDevice virtualDevice = VirtualDevice.getInstance();
-        virtualDevice.addBeatListener(new BeatListener() {
-            @Override
-            public void newBeat(Beat beat) {
-                ConnectMode.super.onBeat();
-            }
-        });
+        virtualDevice.addBeatListener(ConnectMode.super::onBeat);
 
     }
 }

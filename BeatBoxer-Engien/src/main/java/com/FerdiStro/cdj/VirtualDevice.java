@@ -4,6 +4,7 @@ import com.FerdiStro.LogUtils;
 import com.FerdiStro.cdj.exceptions.BeatFinderNotRunningException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.deepsymmetry.beatlink.Beat;
 import org.deepsymmetry.beatlink.BeatFinder;
 import org.deepsymmetry.beatlink.BeatListener;
 import org.deepsymmetry.beatlink.VirtualCdj;
@@ -60,15 +61,15 @@ public class VirtualDevice {
             throw new IllegalStateException();
         }
 
-        BeatFinder beatFinder = BeatFinder.getInstance();
 
-        if (!beatFinder.isRunning()) {
+        if (!BeatFinder.getInstance().isRunning()) {
             throw new BeatFinderNotRunningException(cdj.toString());
         }
+        log.info("VirtualDevice ready! All finder up!");
     }
 
     public void addBeatListener(BeatListener beatListener) {
-
+        BeatFinder.getInstance().addBeatListener(beatListener);
     }
 
 
