@@ -44,6 +44,9 @@ public class Main {
         }
 
         beatMode.startUp();
+        beatMode.printAnalytics();
+
+
 
 
     }

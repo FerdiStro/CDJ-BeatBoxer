@@ -24,6 +24,7 @@ dependencies {
 
 application {
   mainClass = "com.FerdiStro.Main"
+  applicationDefaultJvmArgs = listOf("-Djava.net.preferIPv4Stack=true", "-Djava.net.preferIPv4Addresses=true")
 }
 
 tasks.test { useJUnitPlatform() }

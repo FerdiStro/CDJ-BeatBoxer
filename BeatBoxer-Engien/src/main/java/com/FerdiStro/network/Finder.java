@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.deepsymmetry.beatlink.DeviceAnnouncement;
 import org.deepsymmetry.beatlink.DeviceFinder;
 
+import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Set;
 
@@ -39,7 +40,6 @@ public class Finder {
             log.info(LogUtils.LINE_SEPARATOR);
             log.info("Attempt to find Device. Attempt: " + cdjAttempts);
             try {
-
                 deviceFinder.start();
 
                 //wait for finding
@@ -48,7 +48,15 @@ public class Finder {
                 if (!deviceFinder.getCurrentDevices().isEmpty()) {
                     deviceFound = true;
                     this.deviceAnnouncements = deviceFinder.getCurrentDevices();
-                    log.info("Devices found");
+                    log.info("Devices found:");
+                    log.info(LogUtils.LINE_SEPARATOR);
+                    assert deviceAnnouncements != null;
+                    for (DeviceAnnouncement device : deviceAnnouncements) {
+                        log.info("Number:  {}", device.getDeviceNumber());
+                        log.info("Name:    {}", device.getDeviceName());
+                        log.info("Address: {}", device.getAddress());
+                        log.info("---");
+                    }
                     break;
                 }
                 cdjAttempts++;

@@ -3,6 +3,10 @@ package com.FerdiStro;
 public class LogUtils {
 
 
+    private LogUtils(){}
+
+    public static String NOT_IMPLEMENTED = "ERROR! This feature  ist not implemented yet";
+
     public static String LINE_SEPARATOR = "__________________________________________________________________________________________________";
 
 

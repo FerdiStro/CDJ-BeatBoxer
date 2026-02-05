@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.iml" filepath="$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.main.iml" filepath="$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.test.iml" filepath="$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BeatBoxer-Tui/BeatBoxer-Tui.iml" filepath="$PROJECT_DIR$/BeatBoxer-Tui/BeatBoxer-Tui.iml" />
     </modules>
   </component>
 </project>
