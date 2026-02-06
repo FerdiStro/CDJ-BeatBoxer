@@ -1,5 +1,5 @@
 [package]
-name = "CDJ-BeatBoxer-TUI"
+name = "BeatBoxer-Tui"
 version = "0.1.0"
 edition = "2024"
 
@@ -7,3 +7,4 @@ edition = "2024"
 ratatui = "0.30.0"
 color-eyre = "0.6.5"
 crossterm = "0.29.0"
+memmap2 = "0.9.9"

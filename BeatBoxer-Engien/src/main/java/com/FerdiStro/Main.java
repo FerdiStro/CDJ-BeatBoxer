@@ -3,6 +3,7 @@ package com.FerdiStro;
 import com.FerdiStro.cdj.modes.AbstractMode;
 import com.FerdiStro.cdj.modes.ConnectMode;
 import com.FerdiStro.cdj.modes.OfflineMode;
+import com.FerdiStro.memory.SharedMemoryProvider;
 import com.FerdiStro.network.Finder;
 import com.FerdiStro.network.NetWorkInfo;
 import com.FerdiStro.network.exceptions.NetworkNotFoundException;
@@ -26,6 +27,9 @@ public class Main {
         log.info(LogUtils.HEADER);
         log.info(LogUtils.LINE_SEPARATOR);
 
+
+        SharedMemoryProvider.getInstance().start();
+
         NetWorkInfo netWorkInfo = NetWorkInfo.getInstance();
 
         if (!netWorkInfo.status()) {
@@ -45,8 +49,6 @@ public class Main {
 
         beatMode.startUp();
         beatMode.printAnalytics();
-
-
 
 
     }
