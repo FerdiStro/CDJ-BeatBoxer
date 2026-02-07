@@ -1,6 +1,7 @@
 mod app;
 
 use crate::app::app::App;
+use crate::app::buttons::{Button, First_Control_Button};
 use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::layout::Constraint::Ratio;
@@ -29,6 +30,10 @@ fn run(mut terminal: DefaultTerminal, mut app: App) -> Result<()> {
                 if key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') => break Ok(()),
+                        KeyCode::Right => app.next_mode(),
+                        KeyCode::Left => app.previous_mode(),
+                        KeyCode::Enter => app.submit(),
+
                         _ => {}
                     }
                 }
@@ -70,12 +75,12 @@ fn render_header(frame: &mut Frame, area: Rect, app: &App) {
     let inner_area = block.inner(area);
     let header_content = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Ratio(1, 8), Ratio(1, 8), Ratio(6, 8)]);
+        .constraints([Ratio(2, 8), Ratio(1, 8), Ratio(5, 8)]);
 
     let [setting_area, counter_container, _rest] = header_content.areas(inner_area);
 
     // Settings
-    frame.render_widget(Paragraph::new("Settings"), setting_area);
+    Button::render_button(app, frame, setting_area, First_Control_Button::Settings);
 
     // Small-counter
     let small_counter_layout = Layout::default()
@@ -87,12 +92,16 @@ fn render_header(frame: &mut Frame, area: Rect, app: &App) {
     let areas = [count_0, count_1, count_2, count_3];
     for (i, area) in areas.into_iter().enumerate() {
         let is_active = i == (app.small_counter as usize);
-        let (symbol , color )= if is_active { ("⬤", Color::Red) } else { ("⬤", Color::White) };
+        let (symbol, color) = if is_active {
+            ("⬤", Color::Red)
+        } else {
+            ("⬤", Color::White)
+        };
         frame.render_widget(
             Paragraph::new(symbol)
                 .style(Style::default().fg(color))
                 .centered(),
-            area
+            area,
         );
     }
 }

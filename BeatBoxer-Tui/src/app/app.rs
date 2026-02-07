@@ -2,6 +2,7 @@ use memmap2::MmapMut;
 use std::fs::OpenOptions;
 use std::sync::{Arc, Mutex};
 use std::{hint, thread};
+use crate::app::buttons::First_Control_Button;
 
 pub struct App {
     track_title: String,
@@ -11,6 +12,7 @@ pub struct App {
     pub small_counter: u8,
     pub total_counter: u64,
     shared_state: Arc<Mutex<ReceiveObject>>,
+    pub current_mode: First_Control_Button,
 }
 
 #[repr(C)]
@@ -37,7 +39,7 @@ impl App {
         let shared_data = Arc::new(Mutex::new(ReceiveObject::default()));
         let thread_shared_data = shared_data.clone();
 
-        let handle = thread::spawn(move || {
+        thread::spawn(move || {
             println!("Reading Thread start");
             let file_result = OpenOptions::new()
                 .read(true)
@@ -72,7 +74,7 @@ impl App {
                     if current_sequence > last_sequence {
                         let data = std::ptr::read_volatile(receive_ptr);
                         last_sequence = current_sequence;
-                        
+
                         if let Ok(mut guard) = thread_shared_data.lock() {
                             guard.bpm = data.bpm;
                             guard.total_counter = data.total_counter;
@@ -92,6 +94,19 @@ impl App {
             is_playing: false,
             small_counter: 0,
             shared_state: shared_data,
+            current_mode: First_Control_Button::Settings
         }
+    }
+
+    pub fn next_mode(&mut self) {
+        self.current_mode = self.current_mode.next();
+    }
+
+    pub fn previous_mode(&mut self) {
+        self.current_mode = self.current_mode.previous();
+    }
+
+    pub fn submit(&mut self){
+
     }
 }
