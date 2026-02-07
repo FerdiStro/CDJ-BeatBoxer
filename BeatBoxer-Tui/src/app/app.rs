@@ -1,8 +1,10 @@
-use memmap2::MmapMut;
-use std::fs::OpenOptions;
 use std::sync::{Arc, Mutex};
-use std::{hint, thread};
+
 use crate::app::buttons::First_Control_Button;
+use crate::app::memory::memory::{Memory, ReceiveObject};
+
+use crate::app::render::render::Render;
+use color_eyre::Result;
 
 pub struct App {
     track_title: String,
@@ -15,18 +17,7 @@ pub struct App {
     pub current_mode: First_Control_Button,
 }
 
-#[repr(C)]
-#[derive(Debug, Copy, Clone, Default)]
-pub struct ReceiveObject {
-    pub sequence: u64,
-    pub bpm: f64,
-    pub small_counter: u8,
-    pub total_counter: u64,
-}
-
 impl App {
-    const FILE_PATH: &str = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/fromEngien_shm.bin";
-
     pub fn update(&mut self) {
         if let Ok(guard) = self.shared_state.lock() {
             self.bpm = guard.bpm;
@@ -35,58 +26,13 @@ impl App {
         }
     }
 
-    pub fn new() -> Self {
+    pub fn new() -> Result<()> {
         let shared_data = Arc::new(Mutex::new(ReceiveObject::default()));
         let thread_shared_data = shared_data.clone();
 
-        thread::spawn(move || {
-            println!("Reading Thread start");
-            let file_result = OpenOptions::new()
-                .read(true)
-                .write(true)
-                .open(Self::FILE_PATH);
+        Memory::new(thread_shared_data);
 
-            let file = match file_result {
-                Ok(file) => file,
-                Err(error) => {
-                    eprintln!("Problem opening the file: {error:?}");
-                    return;
-                }
-            };
-
-            let mmap_result = unsafe { MmapMut::map_mut(&file) };
-
-            let mmap = match mmap_result {
-                Ok(mmap) => mmap,
-                Err(error) => {
-                    eprintln!("Problem opening the file: {error:?}");
-                    return;
-                }
-            };
-
-            let receive_ptr = mmap.as_ptr() as *const ReceiveObject;
-            let mut last_sequence: u64 = 0;
-
-            loop {
-                unsafe {
-                    let current_sequence = std::ptr::read_volatile(&(*receive_ptr).sequence);
-
-                    if current_sequence > last_sequence {
-                        let data = std::ptr::read_volatile(receive_ptr);
-                        last_sequence = current_sequence;
-
-                        if let Ok(mut guard) = thread_shared_data.lock() {
-                            guard.bpm = data.bpm;
-                            guard.total_counter = data.total_counter;
-                            guard.small_counter = data.small_counter;
-                        }
-                    } else {
-                        hint::spin_loop();
-                    }
-                }
-            }
-        });
-        Self {
+        Render::run(Self {
             track_title: "Wait on CDJ..".to_string(),
             artist: "xxx".to_string(),
             bpm: 0.0,
@@ -94,8 +40,8 @@ impl App {
             is_playing: false,
             small_counter: 0,
             shared_state: shared_data,
-            current_mode: First_Control_Button::Settings
-        }
+            current_mode: First_Control_Button::Settings,
+        })
     }
 
     pub fn next_mode(&mut self) {
@@ -106,7 +52,5 @@ impl App {
         self.current_mode = self.current_mode.previous();
     }
 
-    pub fn submit(&mut self){
-
-    }
+    pub fn submit(&mut self) {}
 }
