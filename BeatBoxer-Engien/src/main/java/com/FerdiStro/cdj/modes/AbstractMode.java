@@ -2,6 +2,8 @@ package com.FerdiStro.cdj.modes;
 
 import com.FerdiStro.LogUtils;
 import com.FerdiStro.cdj.Modifier;
+import com.FerdiStro.memory.SharedMemoryProvider;
+import com.FerdiStro.memory.TransferObject;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,13 +20,16 @@ public abstract class AbstractMode {
 
     public abstract void modifyBpm(Modifier modifier, float value);
 
+    protected SharedMemoryProvider memoryProvider;
+
     protected static final Logger log = LogManager.getLogger();
+
 
     @Getter
     private Long totalCounter = 1L;
 
     @Getter
-    private byte smallCounter = 0b001;
+    private byte smallCounter = 0;
 
     /**
      * Beat grid is displayed by a long max 64 Bit long. Position can only increase, after 64. place it will be reset to the first postion.
@@ -32,23 +37,29 @@ public abstract class AbstractMode {
      * SmallCount just 4 Bits big counting.
      * Only Increasing position
      */
-    public void movePosition() {
-        if ((totalCounter & (1L << 63)) == 0) {
-            totalCounter <<= 1;
+    private void movePosition() {
+        totalCounter <<= 1;
+        if (totalCounter == 0) {
+            totalCounter = 1L;
         }
-        if ((smallCounter & 0b1000) == 0) {
-            smallCounter <<= 1;
-        }
+        smallCounter = (byte) ((smallCounter + 1) & 3);
     }
 
-    public void printStartUpSequence() {
+
+    public void init() {
         log.info(LogUtils.LINE_SEPARATOR);
         log.info("Start:  {}", getName());
         log.info(LogUtils.LINE_SEPARATOR);
+        this.memoryProvider = SharedMemoryProvider.getInstance();
     }
 
 
-    public void onBeat() {
+
+
+    public void onBeat(int barPosition) {
+        this.smallCounter = (byte) (barPosition - 1);
+        TransferObject transferObject = new TransferObject(getCurrentBpm(), getSmallCounter(), getTotalCounter());
+        this.memoryProvider.writeToMemory(transferObject);
     }
 
     public void printAnalytics() {

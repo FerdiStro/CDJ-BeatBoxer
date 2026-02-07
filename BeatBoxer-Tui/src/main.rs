@@ -86,14 +86,13 @@ fn render_header(frame: &mut Frame, area: Rect, app: &App) {
 
     let areas = [count_0, count_1, count_2, count_3];
     for (i, area) in areas.into_iter().enumerate() {
-        let is_active = i == app.small_counter as usize;
-
-        let block = if is_active {
-            Block::bordered().style(Style::default().bg(Color::Red))
-        } else {
-            Block::bordered().style(Style::default().fg(Color::DarkGray))
-        };
-
-        frame.render_widget(block, area);
+        let is_active = i == (app.small_counter as usize);
+        let (symbol , color )= if is_active { ("⬤", Color::Red) } else { ("⬤", Color::White) };
+        frame.render_widget(
+            Paragraph::new(symbol)
+                .style(Style::default().fg(color))
+                .centered(),
+            area
+        );
     }
 }

@@ -11,6 +11,7 @@ import java.nio.MappedByteBuffer;
 public class TransferObject {
     @Getter
     private final double bpm;
+    @Getter
     private final byte smallCounter;
     private final long totalCounter;
     protected static final Logger log = LogManager.getLogger();
@@ -37,6 +38,7 @@ public class TransferObject {
             log.error("Buffer is read only");
             return;
         }
+        buffer.position(0);
         buffer.putDouble(POSITION_BPM, bpm);
         buffer.put(POSITION_SMALL_COUNTER, smallCounter);
         buffer.putLong(POSITION_TOTAL_COUNTER, totalCounter);

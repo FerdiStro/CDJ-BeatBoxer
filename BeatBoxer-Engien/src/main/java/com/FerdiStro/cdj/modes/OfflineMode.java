@@ -9,7 +9,7 @@ public class OfflineMode extends AbstractMode {
     private static final double DEFAULT_BPM = 120.00;
 
     public OfflineMode() {
-        super.printStartUpSequence();
+        super.init();
     }
 
 

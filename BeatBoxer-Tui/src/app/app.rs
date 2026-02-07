@@ -1,16 +1,16 @@
 use memmap2::MmapMut;
 use std::fs::OpenOptions;
-use std::{hint, thread};
 use std::sync::{Arc, Mutex};
+use std::{hint, thread};
 
 pub struct App {
-     track_title: String,
+    track_title: String,
     artist: String,
     pub bpm: f64,
     is_playing: bool,
     pub small_counter: u8,
     pub total_counter: u64,
-    shared_state : Arc<Mutex<ReceiveObject>>,
+    shared_state: Arc<Mutex<ReceiveObject>>,
 }
 
 #[repr(C)]
@@ -23,8 +23,7 @@ pub struct ReceiveObject {
 }
 
 impl App {
-    const FILE_PATH: &str = "../fromEngien_shm.bin";
-
+    const FILE_PATH: &str = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/fromEngien_shm.bin";
 
     pub fn update(&mut self) {
         if let Ok(guard) = self.shared_state.lock() {
@@ -47,20 +46,23 @@ impl App {
 
             let file = match file_result {
                 Ok(file) => file,
-                Err(error) => panic!("Problem opening the file: {error:?}"),
+                Err(error) => {
+                    eprintln!("Problem opening the file: {error:?}");
+                    return;
+                }
             };
 
             let mmap_result = unsafe { MmapMut::map_mut(&file) };
 
             let mmap = match mmap_result {
                 Ok(mmap) => mmap,
-                Err(error) => panic!("Problem opening the file: {error:?}"),
+                Err(error) => {
+                    eprintln!("Problem opening the file: {error:?}");
+                    return;
+                }
             };
 
-            let ptr = mmap.as_ptr();
-
-            let receive_ptr = ptr as *const ReceiveObject;
-
+            let receive_ptr = mmap.as_ptr() as *const ReceiveObject;
             let mut last_sequence: u64 = 0;
 
             loop {
@@ -70,9 +72,7 @@ impl App {
                     if current_sequence > last_sequence {
                         let data = std::ptr::read_volatile(receive_ptr);
                         last_sequence = current_sequence;
-
-                        println!("BPM :{}", data.bpm);
-
+                        
                         if let Ok(mut guard) = thread_shared_data.lock() {
                             guard.bpm = data.bpm;
                             guard.total_counter = data.total_counter;
@@ -84,7 +84,6 @@ impl App {
                 }
             }
         });
-
         Self {
             track_title: "Wait on CDJ..".to_string(),
             artist: "xxx".to_string(),

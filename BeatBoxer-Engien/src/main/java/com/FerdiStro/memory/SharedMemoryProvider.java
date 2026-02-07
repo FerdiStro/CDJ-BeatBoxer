@@ -31,15 +31,9 @@ public class SharedMemoryProvider {
         // Writing part
         File file = new File(FILE_NAME);
         try {
-            if (file.createNewFile()) {
-                log.info("{}  created!", FILE_NAME);
-            } else {
-                log.error("Can not create {}", FILE_NAME);
-            }
 
             this.randomAccessFile = new RandomAccessFile(file, "rw");
             this.randomAccessFile.setLength(FILE_LENGTH);
-
             this.channel = this.randomAccessFile.getChannel();
 
             this.buffer = this.channel.map(FileChannel.MapMode.READ_WRITE, 0, FILE_LENGTH);
@@ -50,6 +44,7 @@ public class SharedMemoryProvider {
                 int len = Math.min(buffer.remaining(), reset_bytes.length);
                 buffer.put(reset_bytes, 0, len);
             }
+            buffer.position(0);
 
         } catch (Exception e) {
             log.error("Error while creating SharedMemoryProvider", e);
@@ -80,14 +75,9 @@ public class SharedMemoryProvider {
             log.error("ERROR: SharedMemoryProvider, buffer == null");
             return;
         }
+        log.info("Small-Count {}", transferObject.getSmallCounter());
         counter++;
         transferObject.writeMappedByteBuffer(buffer, counter);
-
-        //todo: remove only for testing:
-        double checkBpm = buffer.getDouble(8);
-        if (checkBpm == transferObject.getBpm()) {
-            log.info("Buffer reader works");
-        }
     }
 
 
