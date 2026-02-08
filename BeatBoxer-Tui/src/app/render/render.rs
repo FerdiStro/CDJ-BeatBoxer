@@ -1,11 +1,11 @@
-use crate::app::app::App;
-use crate::app::buttons::First_Control_Button;
+use crate::app::app::{App, AppAction};
+use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
 use crate::app::render::render_buttons_section::render_buttons_section;
 use crate::app::render::render_header_section::render_header_section;
 use crate::app::render::render_manage_section::render_manage_section;
 use crate::app::render::render_render_section::render_render_section;
 use crossterm::event;
-use crossterm::event::{Event, KeyCode, KeyEventKind};
+use crossterm::event::{Event, KeyEventKind};
 use ratatui::layout::Constraint::Ratio;
 use ratatui::layout::{Constraint, Direction, Flex, Layout, Rect};
 use ratatui::Frame;
@@ -22,12 +22,22 @@ impl Render {
             if event::poll(Duration::from_millis(50))? {
                 if let Event::Key(key) = event::read()? {
                     if key.kind == KeyEventKind::Press {
-                        match key.code {
-                            KeyCode::Char('q') => break Ok(()),
-                            KeyCode::Right => app.next_mode(),
-                            KeyCode::Left => app.previous_mode(),
-                            KeyCode::Enter => First_Control_Button::on_submit(app.current_mode, &app.memory),
+                        let [action, state] = app.key_board_interactions.on_key_code(key.code);
 
+                        match action {
+                            AppAction::Quit => break Ok(()),
+                            AppAction::NextMode => app.next_mode(state),
+                            AppAction::PreviousMode => app.previous_mode(state),
+                            AppAction::Submit => match state {
+                                AppAction::FirstMode => {
+                                    FirstControlButton::submit(&app.first_control_mode, &app.memory)
+                                }
+                                AppAction::SecondMode => SecondControlButton::submit(
+                                    &app.second_control_mode,
+                                    &app.memory,
+                                ),
+                                _ => {}
+                            },
                             _ => {}
                         }
                     }

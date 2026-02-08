@@ -1,5 +1,5 @@
 use crate::app::app::App;
-use crate::app::buttons::{Button, First_Control_Button};
+use crate::app::buttons::{Button, FirstControlButton};
 use crate::app::render::render::Render;
 use ratatui::layout::Constraint::Ratio;
 use ratatui::layout::{Direction, Layout, Rect};
@@ -46,25 +46,25 @@ fn render_controll_Section(frame: &mut Frame, control_section: Rect, app: &App) 
         .constraints([Ratio(1, 2), Ratio(1, 2)])
         .areas(adjust_section);
 
-    Button::render_button(
+    FirstControlButton::render_button(
         app,
         frame,
         minus_button_area,
-        First_Control_Button::DecreaseBpm,
+        FirstControlButton::DecreaseBpm,
     );
-    Button::render_button(
+    FirstControlButton::render_button(
         app,
         frame,
         plus_button_area,
-        First_Control_Button::IncreaseBpm,
+        FirstControlButton::IncreaseBpm,
     );
 
     //Master Button
-    Button::render_button_color(
+    FirstControlButton::render_button_color(
         app,
         frame,
         master_button,
-        First_Control_Button::BecomeMaster,
+        FirstControlButton::BecomeMaster,
         is_master_color
     );
 }

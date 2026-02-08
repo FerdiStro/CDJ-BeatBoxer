@@ -1,5 +1,5 @@
 use crate::app::app::App;
-use crate::app::buttons::{Button, First_Control_Button};
+use crate::app::buttons::{Button, FirstControlButton};
 use crate::app::render::render::Render;
 use ratatui::layout::Constraint::Ratio;
 use ratatui::layout::{Direction, Layout, Rect};
@@ -20,7 +20,7 @@ pub fn render_header_section(frame: &mut Frame, area: Rect, app: &App) {
     let [setting_area, counter_container, _rest] = header_content.areas(inner_area);
 
     // Settings
-    Button::render_button(app, frame, setting_area, First_Control_Button::Settings);
+    FirstControlButton::render_button(app, frame, setting_area, FirstControlButton::Settings);
 
     // Small-counter
     let small_counter_layout = Layout::default()
