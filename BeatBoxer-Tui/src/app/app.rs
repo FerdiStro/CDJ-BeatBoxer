@@ -15,6 +15,8 @@ pub struct App {
     pub total_counter: u64,
     shared_state: Arc<Mutex<ReceiveObject>>,
     pub current_mode: First_Control_Button,
+    pub is_master: bool,
+    pub memory: Memory
 }
 
 impl App {
@@ -23,14 +25,16 @@ impl App {
             self.bpm = guard.bpm;
             self.small_counter = guard.small_counter;
             self.total_counter = guard.total_counter;
+            self.is_master = guard.is_master;
         }
     }
+
 
     pub fn new() -> Result<()> {
         let shared_data = Arc::new(Mutex::new(ReceiveObject::default()));
         let thread_shared_data = shared_data.clone();
 
-        Memory::new(thread_shared_data);
+       let memory =  Memory::new(thread_shared_data);
 
         Render::run(Self {
             track_title: "Wait on CDJ..".to_string(),
@@ -41,6 +45,8 @@ impl App {
             small_counter: 0,
             shared_state: shared_data,
             current_mode: First_Control_Button::Settings,
+            is_master: false,
+            memory: memory,
         })
     }
 

@@ -2,10 +2,13 @@ package com.FerdiStro.cdj;
 
 import com.FerdiStro.LogUtils;
 import com.FerdiStro.cdj.exceptions.BeatFinderNotRunningException;
+import com.FerdiStro.cdj.exceptions.BecomeMasterException;
+import com.FerdiStro.cdj.modes.ConnectMode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.deepsymmetry.beatlink.BeatFinder;
-import org.deepsymmetry.beatlink.BeatListener;
+import org.deepsymmetry.beatlink.DeviceUpdate;
+import org.deepsymmetry.beatlink.MasterListener;
 import org.deepsymmetry.beatlink.VirtualCdj;
 import org.deepsymmetry.beatlink.data.ArtFinder;
 import org.deepsymmetry.beatlink.data.BeatGridFinder;
@@ -23,11 +26,6 @@ public class VirtualDevice {
     private static VirtualDevice INSTANCE = null;
 
     private final VirtualCdj virtualCdj;
-
-
-    public boolean istMaster() {
-        return virtualCdj.isTempoMaster();
-    }
 
 
     private VirtualDevice() {
@@ -79,19 +77,32 @@ public class VirtualDevice {
         virtualCdj = cdj;
     }
 
-    public void addBeatListener(BeatListener beatListener) {
-        BeatFinder.getInstance().addBeatListener(beatListener);
-    }
-
-    public double getMasterBpm() {
-        return virtualCdj.getMasterTempo();
-    }
-
     public static VirtualDevice getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new VirtualDevice();
         }
         return INSTANCE;
+    }
+
+    public boolean istMaster() {
+        return virtualCdj.isTempoMaster();
+    }
+
+    public void becomeMaster() {
+        try {
+            virtualCdj.becomeTempoMaster();
+        } catch (IOException e) {
+            log.error(e.toString());
+            throw new BecomeMasterException(e.toString());
+        }
+    }
+
+    public void addBeatListener(MasterListener masterListener) {
+        virtualCdj.addMasterListener(masterListener);
+    }
+
+    public double getMasterBpm() {
+        return virtualCdj.getMasterTempo();
     }
 
 

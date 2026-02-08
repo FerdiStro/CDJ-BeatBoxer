@@ -1,14 +1,25 @@
 package com.FerdiStro.cdj.modes;
 
 import com.FerdiStro.LogUtils;
-import com.FerdiStro.cdj.Modifier;
+import com.FerdiStro.drum.DrumMachineCommand;
 import com.FerdiStro.memory.SharedMemoryProvider;
-import com.FerdiStro.memory.TransferObject;
+import com.FerdiStro.memory.bus.MemoryUpdateListener;
+import com.FerdiStro.memory.objects.TransferObject;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class AbstractMode {
+public abstract class AbstractMode implements MemoryUpdateListener {
+
+    protected static final Logger log = LogManager.getLogger();
+    protected SharedMemoryProvider memoryProvider;
+    @Setter
+    private DrumMachineCommand drumMachineCommandLine;
+    @Getter
+    private Long totalCounter = 1L;
+    @Getter
+    private byte smallCounter = 0;
 
     public abstract String getName();
 
@@ -18,18 +29,6 @@ public abstract class AbstractMode {
 
     public abstract boolean isMaster();
 
-    public abstract void modifyBpm(Modifier modifier, float value);
-
-    protected SharedMemoryProvider memoryProvider;
-
-    protected static final Logger log = LogManager.getLogger();
-
-
-    @Getter
-    private Long totalCounter = 1L;
-
-    @Getter
-    private byte smallCounter = 0;
 
     /**
      * Beat grid is displayed by a long max 64 Bit long. Position can only increase, after 64. place it will be reset to the first postion.
@@ -54,12 +53,18 @@ public abstract class AbstractMode {
     }
 
 
+    public void onMasterChange() {
+        this.sendTransferObject();
+    }
+
+    public void onTempoChange() {
+        this.sendTransferObject();
+    }
 
 
     public void onBeat(int barPosition) {
         this.smallCounter = (byte) (barPosition - 1);
-        TransferObject transferObject = new TransferObject(getCurrentBpm(), getSmallCounter(), getTotalCounter());
-        this.memoryProvider.writeToMemory(transferObject);
+        this.sendTransferObject();
     }
 
     public void printAnalytics() {
@@ -67,6 +72,11 @@ public abstract class AbstractMode {
         log.info("Bpm: {}", getCurrentBpm());
         log.info("Master: {}", isMaster());
         log.info(LogUtils.LINE_SEPARATOR);
+    }
+
+    private void sendTransferObject() {
+        TransferObject transferObject = new TransferObject(getCurrentBpm(), getSmallCounter(), getTotalCounter(), isMaster());
+        this.memoryProvider.writeToMemory(transferObject);
     }
 
 

@@ -3,8 +3,8 @@ package com.FerdiStro;
 import com.FerdiStro.cdj.modes.AbstractMode;
 import com.FerdiStro.cdj.modes.ConnectMode;
 import com.FerdiStro.cdj.modes.OfflineMode;
+import com.FerdiStro.drum.DrumMachine;
 import com.FerdiStro.memory.SharedMemoryProvider;
-import com.FerdiStro.memory.TransferObject;
 import com.FerdiStro.network.Finder;
 import com.FerdiStro.network.NetWorkInfo;
 import com.FerdiStro.network.exceptions.NetworkNotFoundException;
@@ -30,6 +30,7 @@ public class Main {
         log.info("Java Working Directory: " + System.getProperty("user.dir"));
 
         SharedMemoryProvider.getInstance().start();
+
         NetWorkInfo netWorkInfo = NetWorkInfo.getInstance();
 
         if (!netWorkInfo.status()) {
@@ -49,6 +50,8 @@ public class Main {
 
         beatMode.startUp();
         beatMode.printAnalytics();
+
+        new DrumMachine(beatMode);
 
 
     }

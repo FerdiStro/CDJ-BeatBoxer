@@ -1,11 +1,12 @@
 use crate::app::app::App;
-use ratatui::layout::{Constraint, Direction, Flex, Layout, Rect};
+use crate::app::memory::memory::{Memory, SendObject};
+use crate::app::render::render::Render;
+use color_eyre::owo_colors::OwoColorize;
+use ratatui::layout::Rect;
 use ratatui::prelude::{Color, Style};
 use ratatui::widgets::{Block, Paragraph};
 use ratatui::Frame;
 use std::fmt;
-use ratatui::layout::Constraint::Ratio;
-use ratatui::macros::constraints;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum First_Control_Button {
@@ -52,6 +53,17 @@ impl First_Control_Button {
         ]
         .into_iter()
     }
+
+    pub fn on_submit(button_type: First_Control_Button, memory: &Memory) {
+        let mut send_object = SendObject::default();
+        match button_type {
+            First_Control_Button::Settings => return,
+            First_Control_Button::DecreaseBpm => send_object.decrease_bpm = true,
+            First_Control_Button::IncreaseBpm => send_object.increase_bpm = true,
+            First_Control_Button::BecomeMaster => send_object.become_master = true,
+        }
+        memory.sender.send(send_object).unwrap();
+    }
 }
 
 pub struct Button {}
@@ -71,25 +83,30 @@ impl Button {
         area: Rect,
         button_type: First_Control_Button,
     ) {
-        let centered_vertical = Layout::default()
-            .direction(Direction::Vertical)
-            .constraints([
-                Constraint::Length(3),
-
-            ])
-            .flex(Flex::Center)
-            .split(area)[0];
-
-        let centered_content  = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints([Ratio(1, 8), Ratio(6, 8), Ratio(1, 8)])
-            .areas::<3>(centered_vertical)[1];
-
-
+        let centered_content = Render::center_vertically(area, 3, 1);
 
         let style = Self::get_button_style(app, button_type);
 
-        let widget = Paragraph::new(First_Control_Button::Settings.label())
+        let widget = Paragraph::new(button_type.label())
+            .block(Block::bordered())
+            .style(style)
+            .centered();
+
+        frame.render_widget(widget, centered_content);
+    }
+
+    pub fn render_button_color(
+        app: &App,
+        frame: &mut Frame,
+        area: Rect,
+        button_type: First_Control_Button,
+        color: Color,
+    ) {
+        let centered_content = Render::center_vertically(area, 3, 1);
+
+        let style = Self::get_button_style(app, button_type).fg(color);
+
+        let widget = Paragraph::new(button_type.label())
             .block(Block::bordered())
             .style(style)
             .centered();

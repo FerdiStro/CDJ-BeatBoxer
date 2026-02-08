@@ -1,4 +1,5 @@
 use crate::app::app::App;
+use crate::app::buttons::First_Control_Button;
 use crate::app::render::render_buttons_section::render_buttons_section;
 use crate::app::render::render_header_section::render_header_section;
 use crate::app::render::render_manage_section::render_manage_section;
@@ -6,7 +7,7 @@ use crate::app::render::render_render_section::render_render_section;
 use crossterm::event;
 use crossterm::event::{Event, KeyCode, KeyEventKind};
 use ratatui::layout::Constraint::Ratio;
-use ratatui::layout::{Direction, Layout};
+use ratatui::layout::{Constraint, Direction, Flex, Layout, Rect};
 use ratatui::Frame;
 use std::time::Duration;
 
@@ -25,7 +26,7 @@ impl Render {
                             KeyCode::Char('q') => break Ok(()),
                             KeyCode::Right => app.next_mode(),
                             KeyCode::Left => app.previous_mode(),
-                            KeyCode::Enter => app.submit(),
+                            KeyCode::Enter => First_Control_Button::on_submit(app.current_mode, &app.memory),
 
                             _ => {}
                         }
@@ -35,6 +36,23 @@ impl Render {
 
             app.update()
         }
+    }
+
+    pub fn center_vertically(area: Rect, height: u16, padding: u32) -> Rect {
+        let centered_vertical = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Length(height)])
+            .flex(Flex::Center)
+            .split(area)[0];
+
+        Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([
+                Ratio(padding, 8),
+                Ratio(8 - padding * 2, 8),
+                Ratio(padding, 8),
+            ])
+            .areas::<3>(centered_vertical)[1]
     }
 }
 

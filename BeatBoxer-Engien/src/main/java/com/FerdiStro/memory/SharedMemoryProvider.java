@@ -1,5 +1,8 @@
 package com.FerdiStro.memory;
 
+import com.FerdiStro.memory.bus.MemoryUpdateCommand;
+import com.FerdiStro.memory.bus.MemoryUpdateListener;
+import com.FerdiStro.memory.objects.TransferObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,54 +11,23 @@ import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SharedMemoryProvider {
 
     protected static final Logger log = LogManager.getLogger();
-
-
-    private static SharedMemoryProvider INSTANCE = null;
-
-    private static final String FILE_NAME = "fromEngien_shm.bin";
+    private static final String FROM_ENGIEN_SHM = "fromEngien_shm.bin";
+    private static final String TO_ENGIEN_SHM = "toEngien_shm.bin";
     private static final Integer FILE_LENGTH = 4096;
-
-    private RandomAccessFile randomAccessFile;
-    private FileChannel channel;
-    private MappedByteBuffer buffer;
-    private long counter = 0;
-
-
-    public void start() {
-
-        // Writing part
-        File file = new File(FILE_NAME);
-        try {
-
-            this.randomAccessFile = new RandomAccessFile(file, "rw");
-            this.randomAccessFile.setLength(FILE_LENGTH);
-            this.channel = this.randomAccessFile.getChannel();
-
-            this.buffer = this.channel.map(FileChannel.MapMode.READ_WRITE, 0, FILE_LENGTH);
-            this.buffer.order(ByteOrder.LITTLE_ENDIAN);
-
-            byte[] reset_bytes = new byte[FILE_LENGTH];
-            while (buffer.remaining() > 0) {
-                int len = Math.min(buffer.remaining(), reset_bytes.length);
-                buffer.put(reset_bytes, 0, len);
-            }
-            buffer.position(0);
-
-        } catch (Exception e) {
-            log.error("Error while creating SharedMemoryProvider", e);
-            e.printStackTrace();
-            close();
-        }
-
-        //reading part
-
-
-    }
+    private static SharedMemoryProvider INSTANCE = null;
+    private final List<MemoryUpdateListener> memoryUpdateListeners = new ArrayList<>();
+    Thread readerThread = null;
+    private RandomAccessFile fromEngienRandomAccessFile;
+    private FileChannel fromEngienChannel;
+    private MappedByteBuffer fromEngienBuffer;
+    private long fromEngienCounter = 0;
 
 
     private SharedMemoryProvider() {
@@ -69,23 +41,89 @@ public class SharedMemoryProvider {
         return INSTANCE;
     }
 
+    public void addMemoryUpdateListeners(MemoryUpdateListener updateListener) {
+        log.info("Add new MemoryUpdateListener");
+        this.memoryUpdateListeners.add(updateListener);
+    }
+
+    public void notifyMemoryUpdateListeners(MemoryUpdateCommand command) {
+        for (MemoryUpdateListener listener : this.memoryUpdateListeners) {
+            listener.onMemoryUpdate(command);
+        }
+    }
+
+    public void start() {
+
+        // Writing part
+        File fromEngienFile = new File(FROM_ENGIEN_SHM);
+        try {
+
+            this.fromEngienRandomAccessFile = new RandomAccessFile(fromEngienFile, "rw");
+            this.fromEngienRandomAccessFile.setLength(FILE_LENGTH);
+            this.fromEngienChannel = this.fromEngienRandomAccessFile.getChannel();
+
+            this.fromEngienBuffer = this.fromEngienChannel.map(FileChannel.MapMode.READ_WRITE, 0, FILE_LENGTH);
+            this.fromEngienBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+            byte[] restBytes = new byte[FILE_LENGTH];
+            while (fromEngienBuffer.remaining() > 0) {
+                int len = Math.min(fromEngienBuffer.remaining(), restBytes.length);
+                fromEngienBuffer.put(restBytes, 0, len);
+            }
+            fromEngienBuffer.position(0);
+
+        } catch (Exception e) {
+            log.error("Error while creating SharedMemoryProvider", e);
+            e.printStackTrace();
+            close();
+        }
+
+        //Reading part
+        HighPerfReader reader = new HighPerfReader(TO_ENGIEN_SHM, FILE_LENGTH, data -> {
+            log.debug(data);
+
+            if (data.isBecomeMaster()) {
+                notifyMemoryUpdateListeners(MemoryUpdateCommand.BECOME_MASTER);
+                return;
+            }
+
+            if (data.isIncreaseBpm()) {
+                notifyMemoryUpdateListeners(MemoryUpdateCommand.INCREASE_BPM);
+                return;
+            }
+
+            if (data.isDecreaseBpm()) {
+                notifyMemoryUpdateListeners(MemoryUpdateCommand.DECREASE_BPM);
+                return;
+            }
+
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.DEFAULT);
+
+        });
+        readerThread = new Thread(reader);
+        readerThread.setPriority(Thread.MAX_PRIORITY);
+        readerThread.setName("SHMR");
+        readerThread.start();
+
+
+    }
+
 
     public void writeToMemory(TransferObject transferObject) {
-        if (buffer == null) {
+        if (fromEngienBuffer == null) {
             log.error("ERROR: SharedMemoryProvider, buffer == null");
             return;
         }
-        log.info("Small-Count {}", transferObject.getSmallCounter());
-        counter++;
-        transferObject.writeMappedByteBuffer(buffer, counter);
+        fromEngienCounter++;
+        transferObject.writeMappedByteBuffer(fromEngienBuffer, fromEngienCounter);
     }
 
 
     public void close() {
         try {
-            if (channel != null) channel.close();
-            if (randomAccessFile != null) randomAccessFile.close();
-            buffer = null;
+            if (fromEngienChannel != null) fromEngienChannel.close();
+            if (fromEngienRandomAccessFile != null) fromEngienRandomAccessFile.close();
+            fromEngienBuffer = null;
         } catch (Exception e) {
             log.error("Error closing shared memory", e);
         }

@@ -1,10 +1,11 @@
-use ratatui::Frame;
-use ratatui::layout::{Direction, Layout, Rect};
-use ratatui::layout::Constraint::Ratio;
-use ratatui::prelude::{Color, Style};
-use ratatui::widgets::{Block, Paragraph};
 use crate::app::app::App;
 use crate::app::buttons::{Button, First_Control_Button};
+use crate::app::render::render::Render;
+use ratatui::layout::Constraint::Ratio;
+use ratatui::layout::{Direction, Layout, Rect};
+use ratatui::prelude::{Color, Style};
+use ratatui::widgets::{Block, Paragraph};
+use ratatui::Frame;
 
 pub fn render_header_section(frame: &mut Frame, area: Rect, app: &App) {
     //frame
@@ -40,7 +41,7 @@ pub fn render_header_section(frame: &mut Frame, area: Rect, app: &App) {
             Paragraph::new(symbol)
                 .style(Style::default().fg(color))
                 .centered(),
-            area,
+            Render::center_vertically(area, 1, 0),
         );
     }
 }

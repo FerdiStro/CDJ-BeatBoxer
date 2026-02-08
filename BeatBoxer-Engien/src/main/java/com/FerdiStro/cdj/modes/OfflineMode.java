@@ -2,6 +2,7 @@ package com.FerdiStro.cdj.modes;
 
 import com.FerdiStro.LogUtils;
 import com.FerdiStro.cdj.Modifier;
+import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 
 public class OfflineMode extends AbstractMode {
 
@@ -34,7 +35,7 @@ public class OfflineMode extends AbstractMode {
     }
 
     @Override
-    public void modifyBpm(Modifier modifier, float value) {
-        log.error(LogUtils.NOT_IMPLEMENTED);
+    public void onMemoryUpdate(MemoryUpdateCommand commands) {
+
     }
 }
