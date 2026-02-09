@@ -34,8 +34,4 @@ public class OfflineMode extends AbstractMode {
         return true;
     }
 
-    @Override
-    public void onMemoryUpdate(MemoryUpdateCommand commands) {
-
-    }
 }

@@ -94,8 +94,9 @@ public class ConnectMode extends AbstractMode {
         return virtualDevice.istMaster();
     }
 
+
     @Override
-    public void onMemoryUpdate(MemoryUpdateCommand command) {
+    public void onMemoryUpdateImpl(MemoryUpdateCommand command) {
         switch (command) {
             case BECOME_MASTER -> becomeMaster();
         }

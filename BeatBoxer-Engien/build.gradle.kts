@@ -6,7 +6,13 @@ plugins {
 group = "com.FerdiStro"
 version = "1.0-SNAPSHOT"
 
-repositories { mavenCentral() }
+repositories {
+
+
+  mavenCentral()
+  maven("https://clojars.org/repo")
+}
+
 
 dependencies {
   testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -19,6 +25,8 @@ dependencies {
   annotationProcessor("org.projectlombok:lombok:1.18.34")
 
   implementation("org.deepsymmetry:beat-link:8.0.0")
+
+  implementation("ddf.minim:ddf.minim:2.2.0")
 }
 
 

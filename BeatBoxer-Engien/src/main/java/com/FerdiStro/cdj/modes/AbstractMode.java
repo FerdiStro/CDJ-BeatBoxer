@@ -1,8 +1,9 @@
 package com.FerdiStro.cdj.modes;
 
 import com.FerdiStro.LogUtils;
-import com.FerdiStro.drum.DrumMachineCommand;
+import com.FerdiStro.drum.DrumMachine;
 import com.FerdiStro.memory.SharedMemoryProvider;
+import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import com.FerdiStro.memory.bus.MemoryUpdateListener;
 import com.FerdiStro.memory.objects.TransferObject;
 import lombok.Getter;
@@ -13,9 +14,12 @@ import org.apache.logging.log4j.Logger;
 public abstract class AbstractMode implements MemoryUpdateListener {
 
     protected static final Logger log = LogManager.getLogger();
+    private static final String SAMPLE_KICK = "/home/ferdinoond/CDJ-BeatBoxer/KICK_20.wav";
     protected SharedMemoryProvider memoryProvider;
+    @Getter
+    private boolean smallBeat = true;
     @Setter
-    private DrumMachineCommand drumMachineCommandLine;
+    private DrumMachine drumMachineCommandLine;
     @Getter
     private Long totalCounter = 1L;
     @Getter
@@ -29,6 +33,13 @@ public abstract class AbstractMode implements MemoryUpdateListener {
 
     public abstract boolean isMaster();
 
+    /**
+     * Can be overridden for Mode specific MemoryUpdateCommand
+     *
+     * @param command
+     */
+    public void onMemoryUpdateImpl(MemoryUpdateCommand command) {
+    }
 
     /**
      * Beat grid is displayed by a long max 64 Bit long. Position can only increase, after 64. place it will be reset to the first postion.
@@ -44,14 +55,12 @@ public abstract class AbstractMode implements MemoryUpdateListener {
         smallCounter = (byte) ((smallCounter + 1) & 3);
     }
 
-
     public void init() {
         log.info(LogUtils.LINE_SEPARATOR);
         log.info("Start:  {}", getName());
         log.info(LogUtils.LINE_SEPARATOR);
         this.memoryProvider = SharedMemoryProvider.getInstance();
     }
-
 
     public void onMasterChange() {
         this.sendTransferObject();
@@ -61,9 +70,9 @@ public abstract class AbstractMode implements MemoryUpdateListener {
         this.sendTransferObject();
     }
 
-
     public void onBeat(int barPosition) {
         this.smallCounter = (byte) (barPosition - 1);
+        this.drumMachineCommandLine.onBeat(this.smallCounter);
         this.sendTransferObject();
     }
 
@@ -79,5 +88,11 @@ public abstract class AbstractMode implements MemoryUpdateListener {
         this.memoryProvider.writeToMemory(transferObject);
     }
 
-
+    @Override
+    public void onMemoryUpdate(MemoryUpdateCommand command) {
+        switch (command) {
+            case SMALL_BEAT -> this.smallBeat = !this.smallBeat;
+            default -> onMemoryUpdateImpl(command);
+        }
+    }
 }
