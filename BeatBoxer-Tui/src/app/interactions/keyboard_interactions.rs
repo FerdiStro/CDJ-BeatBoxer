@@ -35,6 +35,10 @@ impl KeyBoardInteractions {
                 self.first_control_button_last = false;
                 first_return = AppAction::PreviousMode
             }
+            KeyCode::Backspace => {
+                first_return = AppAction::Backspace
+            }
+            
             KeyCode::Enter => first_return = AppAction::Submit,
             _ => first_return = AppAction::None,
         }

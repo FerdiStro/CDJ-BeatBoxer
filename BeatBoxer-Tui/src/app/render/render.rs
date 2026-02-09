@@ -17,7 +17,7 @@ impl Render {
     pub fn run(mut app: App) -> color_eyre::Result<()> {
         let mut terminal = ratatui::init();
         loop {
-            terminal.draw(|f| render(f, &app))?;
+            terminal.draw(|f| render(f, &mut app))?;
 
             if event::poll(Duration::from_millis(50))? {
                 if let Event::Key(key) = event::read()? {
@@ -29,13 +29,45 @@ impl Render {
                             AppAction::NextMode => app.next_mode(state),
                             AppAction::PreviousMode => app.previous_mode(state),
                             AppAction::Submit => match state {
-                                AppAction::FirstMode => {
-                                    FirstControlButton::submit(&app.first_control_mode, &app.memory)
-                                }
+                                AppAction::FirstMode => match app.first_control_mode {
+                                    FirstControlButton::FileBrowser => {
+                                        if let Some(index) = app.file_explorer.state.selected() {
+                                            let selected_path = &app.file_explorer.items[index];
+                                            if selected_path.to_string_lossy() == ".." {
+                                                if let Some(parent) =
+                                                    app.file_explorer.current_dir.parent()
+                                                {
+                                                    app.file_explorer.current_dir =
+                                                        parent.to_path_buf();
+                                                    app.file_explorer.read_dir(); // Liste neu laden
+                                                }
+                                            } else if selected_path.is_dir() {
+                                                app.file_explorer.current_dir =
+                                                    selected_path.clone();
+                                                app.file_explorer.read_dir();
+                                            } else {
+                                                app.selected_sound = selected_path.clone();
+                                            }
+                                        }
+                                    }
+                                    _ => FirstControlButton::submit(
+                                        &app.first_control_mode,
+                                        &app.memory,
+                                    ),
+                                },
                                 AppAction::SecondMode => SecondControlButton::submit(
                                     &app.second_control_mode,
                                     &app.memory,
                                 ),
+                                _ => {}
+                            },
+                            AppAction::Backspace => match app.first_control_mode {
+                                FirstControlButton::FileBrowser => {
+                                    if let Some(parent) = app.file_explorer.current_dir.parent() {
+                                        app.file_explorer.current_dir = parent.to_path_buf();
+                                        app.file_explorer.read_dir();
+                                    }
+                                }
                                 _ => {}
                             },
                             _ => {}
@@ -66,7 +98,7 @@ impl Render {
     }
 }
 
-fn render(frame: &mut Frame, app: &App) {
+fn render(frame: &mut Frame, app: &mut App) {
     let body = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Ratio(2, 3), Ratio(1, 3)]);

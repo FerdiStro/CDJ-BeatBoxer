@@ -21,7 +21,8 @@ cd "$GIT_ROOT" || exit 1
 echo "--------------------------------------"
 echo "Checking git status"
 
-FILES=$(git ls-files --modified --others --exclude-standard --full-name)
+FILES=$(git ls-files --modified --others --exclude-standard --full-name )
+#FILES=$(git ls-files --modified --others --exclude-standard --full-name && git diff --cached --name-only)
 
 if [ -z "$FILES" ]; then
     echo "No uncommitted files"

@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
 use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
@@ -5,6 +6,7 @@ use crate::app::memory::memory::{Memory, ReceiveObject};
 
 use crate::app::interactions::keyboard_interactions::KeyBoardInteractions;
 use crate::app::render::render::Render;
+use crate::app::FileExplorer::FileExplorer;
 use color_eyre::Result;
 
 pub enum AppAction {
@@ -14,9 +16,10 @@ pub enum AppAction {
     Submit,
     FirstMode,
     SecondMode,
+    FileMode,
     None,
+    Backspace,
 }
-
 
 pub struct App {
     pub bpm: f64,
@@ -28,6 +31,8 @@ pub struct App {
     pub is_master: bool,
     pub memory: Memory,
     pub key_board_interactions: KeyBoardInteractions,
+    pub file_explorer: FileExplorer,
+    pub selected_sound: PathBuf,
 }
 
 impl App {
@@ -56,12 +61,22 @@ impl App {
             is_master: false,
             memory,
             key_board_interactions: KeyBoardInteractions::new(),
+            file_explorer: FileExplorer::new(),
+            selected_sound: PathBuf::default(),
         })
     }
 
     pub fn next_mode(&mut self, state: AppAction) {
         match state {
-            AppAction::FirstMode =>         self.first_control_mode = self.first_control_mode.next(),
+            AppAction::FirstMode => match self.first_control_mode {
+                FirstControlButton::BecomeMaster => {
+                    //overwork when BecomeMaster-button isn't previous
+                    self.first_control_mode = FirstControlButton::FileBrowser;
+                    self.file_explorer.next()
+                }
+                FirstControlButton::FileBrowser => self.file_explorer.next(),
+                _ => self.first_control_mode = self.first_control_mode.next(),
+            },
             AppAction::SecondMode => self.second_control_mode = self.second_control_mode.next(),
             _ => {}
         }
@@ -69,7 +84,16 @@ impl App {
 
     pub fn previous_mode(&mut self, state: AppAction) {
         match state {
-            AppAction::FirstMode =>         self.first_control_mode = self.first_control_mode.previous(),
+            AppAction::FirstMode => match self.first_control_mode {
+                FirstControlButton::FileBrowser => {
+                    if (self.file_explorer.isStart()) {
+                        self.first_control_mode = self.first_control_mode.previous()
+                    } else {
+                        self.file_explorer.previous();
+                    }
+                }
+                _ => self.first_control_mode = self.first_control_mode.previous(),
+            },
             AppAction::SecondMode => self.second_control_mode = self.second_control_mode.previous(),
             _ => {}
         }

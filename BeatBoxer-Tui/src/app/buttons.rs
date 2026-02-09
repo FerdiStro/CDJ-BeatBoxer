@@ -63,6 +63,7 @@ pub enum FirstControlButton {
     IncreaseBpm,
     DecreaseBpm,
     BecomeMaster,
+    FileBrowser,
 }
 
 impl Button for FirstControlButton {
@@ -72,6 +73,7 @@ impl Button for FirstControlButton {
             FirstControlButton::DecreaseBpm => "-",
             FirstControlButton::IncreaseBpm => "+",
             FirstControlButton::BecomeMaster => "Master",
+            FirstControlButton::FileBrowser => ""
         }
     }
 
@@ -93,16 +95,19 @@ impl Button for FirstControlButton {
             FirstControlButton::Settings => FirstControlButton::DecreaseBpm,
             FirstControlButton::DecreaseBpm => FirstControlButton::IncreaseBpm,
             FirstControlButton::IncreaseBpm => FirstControlButton::BecomeMaster,
-            FirstControlButton::BecomeMaster => FirstControlButton::Settings,
+            FirstControlButton::BecomeMaster => FirstControlButton::FileBrowser,
+            FirstControlButton::FileBrowser => FirstControlButton::Settings,
         }
     }
 
     fn previous(&self) -> Self {
         match self {
-            FirstControlButton::Settings => FirstControlButton::BecomeMaster,
+            FirstControlButton::Settings => FirstControlButton::FileBrowser,
             FirstControlButton::BecomeMaster => FirstControlButton::IncreaseBpm,
             FirstControlButton::IncreaseBpm => FirstControlButton::DecreaseBpm,
             FirstControlButton::DecreaseBpm => FirstControlButton::Settings,
+            FirstControlButton::FileBrowser => FirstControlButton::BecomeMaster,
+
         }
     }
 
@@ -113,6 +118,7 @@ impl Button for FirstControlButton {
             FirstControlButton::DecreaseBpm => send_object.decrease_bpm = true,
             FirstControlButton::IncreaseBpm => send_object.increase_bpm = true,
             FirstControlButton::BecomeMaster => send_object.become_master = true,
+            FirstControlButton::FileBrowser => return,
         }
         memory.sender.send(send_object).unwrap();
     }

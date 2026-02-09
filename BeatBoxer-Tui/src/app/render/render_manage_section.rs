@@ -1,13 +1,14 @@
 use crate::app::app::App;
 use crate::app::buttons::{Button, FirstControlButton};
 use crate::app::render::render::Render;
+use crate::app::FileExplorer::FileExplorer;
 use ratatui::layout::Constraint::Ratio;
 use ratatui::layout::{Direction, Layout, Rect};
 use ratatui::style::{Color, Style};
 use ratatui::widgets::{Block, Paragraph};
 use ratatui::Frame;
 
-pub fn render_manage_section(frame: &mut Frame, area: Rect, app: &App) {
+pub fn render_manage_section(frame: &mut Frame, area: Rect, app: &mut App) {
     let block = Block::bordered().title("Manage-Section");
     frame.render_widget(block.clone(), area);
 
@@ -15,10 +16,11 @@ pub fn render_manage_section(frame: &mut Frame, area: Rect, app: &App) {
 
     let [control_section, browse_section] = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Ratio(1, 8), Ratio(7,8)])
+        .constraints([Ratio(1, 8), Ratio(7, 8)])
         .areas(inner_area);
 
     render_controll_Section(frame, control_section, app);
+    FileExplorer::render_files(app, frame, browse_section)
 }
 
 fn render_controll_Section(frame: &mut Frame, control_section: Rect, app: &App) {
@@ -65,6 +67,6 @@ fn render_controll_Section(frame: &mut Frame, control_section: Rect, app: &App) 
         frame,
         master_button,
         FirstControlButton::BecomeMaster,
-        is_master_color
+        is_master_color,
     );
 }
