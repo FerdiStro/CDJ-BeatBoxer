@@ -10,6 +10,7 @@ use ratatui::layout::Constraint::Ratio;
 use ratatui::layout::{Constraint, Direction, Flex, Layout, Rect};
 use ratatui::Frame;
 use std::time::Duration;
+use crate::app::render::render_utils_section::render_utils_section;
 
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Render {}
@@ -116,5 +117,5 @@ fn render(frame: &mut Frame, app: &mut App) {
     render_header_section(frame, header_grid, app);
     render_render_section(frame, audio_render_grid, app);
     render_buttons_section(frame, button_grid, app);
-    render_buttons_section(frame, utils_grid, app);
+    render_utils_section(frame, utils_grid, app);
 }

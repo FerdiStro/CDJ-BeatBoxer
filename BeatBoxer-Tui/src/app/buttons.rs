@@ -55,6 +55,14 @@ pub enum SecondControlButton {
     BarLock,
     PreviousBar,
     NextBar,
+    BAR_1,
+    BAR_2,
+    BAR_3,
+    BAR_4,
+    BAR_5,
+    BAR_6,
+    BAR_7,
+    BAR_8,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -73,7 +81,7 @@ impl Button for FirstControlButton {
             FirstControlButton::DecreaseBpm => "-",
             FirstControlButton::IncreaseBpm => "+",
             FirstControlButton::BecomeMaster => "Master",
-            FirstControlButton::FileBrowser => ""
+            FirstControlButton::FileBrowser => "file_browser_mode_label_not_displayed",
         }
     }
 
@@ -83,7 +91,7 @@ impl Button for FirstControlButton {
 
     fn get_button_style(&self, app: &App) -> Style {
         let is_selected = app.first_control_mode.label() == self.label();
-        if is_selected {
+        if is_selected && app.key_board_interactions.first_control_button_last {
             Style::default().bg(Color::Yellow).fg(Color::Black)
         } else {
             Style::default().fg(Color::Gray)
@@ -107,7 +115,6 @@ impl Button for FirstControlButton {
             FirstControlButton::IncreaseBpm => FirstControlButton::DecreaseBpm,
             FirstControlButton::DecreaseBpm => FirstControlButton::Settings,
             FirstControlButton::FileBrowser => FirstControlButton::BecomeMaster,
-
         }
     }
 
@@ -130,6 +137,14 @@ impl Button for SecondControlButton {
             SecondControlButton::BarLock => "Lock",
             SecondControlButton::PreviousBar => "<-",
             SecondControlButton::NextBar => "->",
+            SecondControlButton::BAR_1 => "0",
+            SecondControlButton::BAR_2 => "1",
+            SecondControlButton::BAR_3 => "2",
+            SecondControlButton::BAR_4 => "3",
+            SecondControlButton::BAR_5 => "4",
+            SecondControlButton::BAR_6 => "5",
+            SecondControlButton::BAR_7 => "6",
+            SecondControlButton::BAR_8 => "7",
         }
     }
 
@@ -139,7 +154,7 @@ impl Button for SecondControlButton {
 
     fn get_button_style(&self, app: &App) -> Style {
         let is_selected = app.second_control_mode.label() == self.label();
-        if is_selected {
+        if is_selected && !app.key_board_interactions.first_control_button_last {
             Style::default().bg(Color::Yellow).fg(Color::Black)
         } else {
             Style::default().fg(Color::Gray)
@@ -147,14 +162,52 @@ impl Button for SecondControlButton {
     }
 
     fn next(&self) -> Self {
-        todo!()
+        match self {
+            SecondControlButton::BarLock => SecondControlButton::PreviousBar,
+            SecondControlButton::PreviousBar => SecondControlButton::NextBar,
+            SecondControlButton::NextBar => SecondControlButton::BAR_1,
+            SecondControlButton::BAR_1 => SecondControlButton::BAR_2,
+            SecondControlButton::BAR_2 => SecondControlButton::BAR_3,
+            SecondControlButton::BAR_3 => SecondControlButton::BAR_4,
+            SecondControlButton::BAR_4 => SecondControlButton::BAR_5,
+            SecondControlButton::BAR_5 => SecondControlButton::BAR_6,
+            SecondControlButton::BAR_6 => SecondControlButton::BAR_7,
+            SecondControlButton::BAR_7 => SecondControlButton::BAR_8,
+            SecondControlButton::BAR_8 => SecondControlButton::BarLock,
+        }
     }
 
     fn previous(&self) -> Self {
-        todo!()
+        match self {
+            SecondControlButton::BarLock => SecondControlButton::BAR_8,
+            SecondControlButton::PreviousBar => SecondControlButton::BarLock,
+            SecondControlButton::NextBar => SecondControlButton::PreviousBar,
+            SecondControlButton::BAR_1 => SecondControlButton::NextBar,
+            SecondControlButton::BAR_2 => SecondControlButton::BAR_1,
+            SecondControlButton::BAR_3 => SecondControlButton::BAR_2,
+            SecondControlButton::BAR_4 => SecondControlButton::BAR_3,
+            SecondControlButton::BAR_5 => SecondControlButton::BAR_4,
+            SecondControlButton::BAR_6 => SecondControlButton::BAR_5,
+            SecondControlButton::BAR_7 => SecondControlButton::BAR_6,
+            SecondControlButton::BAR_8 => SecondControlButton::BAR_7,
+        }
     }
 
-    fn submit(&self, memory: &Memory) {
-        todo!()
+    fn submit(&self, memory: &Memory) {}
+}
+
+impl SecondControlButton {
+    pub fn render_bar_button(self, app: &App, frame: &mut Frame, area: Rect) {
+        let style = if app.second_control_mode.label() == self.label()
+            && !app.key_board_interactions.first_control_button_last
+        {
+            Style::default().bg(Color::Red)
+        } else {
+            Style::default().fg(Color::Gray)
+        };
+
+        let widget = Block::bordered().style(style);
+
+        frame.render_widget(widget, area);
     }
 }

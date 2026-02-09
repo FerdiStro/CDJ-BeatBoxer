@@ -2,7 +2,7 @@ use crate::app::app::AppAction;
 use crossterm::event::KeyCode;
 
 pub struct KeyBoardInteractions {
-    first_control_button_last: bool,
+    pub first_control_button_last: bool,
 }
 
 impl KeyBoardInteractions {

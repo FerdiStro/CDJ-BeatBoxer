@@ -1,31 +1,58 @@
 use crate::app::app::App;
-use ratatui::layout::Constraint::{Max, Min, Ratio};
-use ratatui::layout::{Direction, Layout, Rect};
-use ratatui::widgets::Block;
+use crate::app::buttons::{Button, SecondControlButton};
+use ratatui::layout::Constraint::{Fill, Length};
+use ratatui::layout::{Constraint, Direction, Layout, Rect};
+use ratatui::widgets::{Block, Paragraph};
 use ratatui::Frame;
 
 pub fn render_buttons_section(frame: &mut Frame, area: Rect, app: &App) {
-    frame.render_widget(Block::bordered().title("Buttons"), area);
 
     let [button_area, numbers_area, big_button_area] = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Ratio(1, 8), Ratio(1, 8), Ratio(6, 8)])
+        .constraints([Length(3), Length(1), Fill(0)])
         .areas(area);
 
-    //Button Area
     render_control_buttons(frame, button_area, app);
+    render_number_row(frame, numbers_area, app);
+    render_pad_row(frame, big_button_area, app);
+}
+
+fn render_pad_row(frame: &mut Frame, area: Rect, app: &App) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Ratio(1, 8); 8])
+        .split(area);
+
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_1, app, frame, chunks[0]);
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_2, app, frame, chunks[1]);
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_3, app, frame, chunks[2]);
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_4, app, frame, chunks[3]);
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_5, app, frame, chunks[4]);
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_6, app, frame, chunks[5]);
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_7, app, frame, chunks[6]);
+    SecondControlButton::render_bar_button(SecondControlButton::BAR_8, app, frame, chunks[7]);
+}
+
+fn render_number_row(frame: &mut Frame, area: Rect, app: &App) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Ratio(1, 8); 8])
+        .split(area);
+
+    for (i, chunk) in chunks.iter().enumerate() {
+        let label = (i + 1).to_string();
+        let widget = Paragraph::new(label).centered();
+        frame.render_widget(widget, *chunk);
+    }
 }
 
 fn render_control_buttons(frame: &mut Frame, area: Rect, app: &App) {
-    // Layout::default()
-    //     .direction(Direction::Horizontal)
-    //     .constraints([
-    //         Min(0)
-    //     ])
+    let [button_1, button_2, button_3] = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Length(8), Length(8), Length(8)])
+        .areas(area);
 
-
-    // Button::render_button(app, frame, area )
-
-
-
+    SecondControlButton::render_button(app, frame, button_1, SecondControlButton::BarLock);
+    SecondControlButton::render_button(app, frame, button_2, SecondControlButton::PreviousBar);
+    SecondControlButton::render_button(app, frame, button_3, SecondControlButton::NextBar);
 }
