@@ -9,6 +9,7 @@ import com.FerdiStro.memory.SharedMemoryProvider;
 import ddf.minim.AudioOutput;
 import ddf.minim.Minim;
 import ddf.minim.ugens.Summer;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,6 +28,8 @@ public class DrumMachine {
 
 
     private final Beat[] bigGrid = new Beat[64];
+
+    @Getter
     private final Beat[] smallGrid = new Beat[8];
     /**
      * Map for faster reading
@@ -57,6 +60,7 @@ public class DrumMachine {
             Beat beat = this.smallGrid[beatPos];
             if (beat == null) {
                 beat = new Beat(this.minim, this.mixer);
+                log.info("Beat_POST: {}", beatPos);
                 updateValidBeat(beatPos, beat);
             }
             return beat;

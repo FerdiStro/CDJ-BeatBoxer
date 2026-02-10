@@ -5,7 +5,6 @@ import com.FerdiStro.memory.bus.MemoryUpdateListener;
 import com.FerdiStro.memory.objects.ReceivedData;
 import com.FerdiStro.memory.objects.TransferObject;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

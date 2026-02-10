@@ -53,13 +53,69 @@ impl SendObject {
 }
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Copy, Clone)]
+pub struct SoundEntry {
+    pub path: [u8; 256],
+    pub assigned_slot: u8,
+    _padding: [u8; 7],
+}
+
+impl SoundEntry {
+    pub fn get_path_string(&self) -> String {
+        let len = self.path.iter().position(|&c| c == 0).unwrap_or(256);
+        String::from_utf8_lossy(&self.path[..len]).to_string()
+    }
+    pub fn is_active_in_beat(&self, beat_index: usize) -> bool {
+        ((self.assigned_slot >> beat_index) & 1) == 1
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ReceiveObject {
     pub sequence: u64,
     pub bpm: f64,
     pub small_counter: u8,
     pub is_master: bool,
     pub total_counter: u64,
+
+    //Sounds
+    pub sounds: [SoundEntry; 10],
+}
+
+impl ReceiveObject {
+    pub fn default() -> Self {
+        Self::new(
+            0,
+            0.0,
+            0,
+            false,
+            0,
+            [SoundEntry {
+                path: [0; 256],
+                assigned_slot: 0,
+                _padding: [0; 7],
+            }; 10],
+        )
+    }
+
+    fn new(
+        sequence: u64,
+        bpm: f64,
+        small_counter: u8,
+        is_master: bool,
+        total_counter: u64,
+        sounds: [SoundEntry; 10],
+    ) -> Self {
+        Self {
+            sequence,
+            bpm,
+            small_counter,
+            is_master,
+            total_counter,
+            sounds,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -149,7 +205,6 @@ impl Memory {
 
     fn start_reading_thread(thread_shared_data: Arc<Mutex<ReceiveObject>>) {
         thread::spawn(move || {
-            println!("Reading Thread start");
             let file_result = OpenOptions::new()
                 .read(true)
                 .write(true)
@@ -189,6 +244,7 @@ impl Memory {
                             guard.total_counter = data.total_counter;
                             guard.small_counter = data.small_counter;
                             guard.is_master = data.is_master;
+                            guard.sounds = data.sounds;
                         }
                     } else {
                         hint::spin_loop();

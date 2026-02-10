@@ -38,7 +38,7 @@ impl Render {
                                     send_object.selected_sound_path[..len]
                                         .copy_from_slice(&bytes[..len]);
                                     send_object.add_sound_on_small_beat = true;
-                                    send_object.small_counter = 1;
+                                    send_object.small_counter = 0;
                                     app.memory.sender.send(send_object).unwrap();
                                     ()
                                 }

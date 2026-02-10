@@ -1,5 +1,5 @@
 use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
-use crate::app::memory::memory::{Memory, ReceiveObject};
+use crate::app::memory::memory::{Memory, ReceiveObject, SoundEntry};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
@@ -19,6 +19,40 @@ pub enum AppAction {
     None,
     Backspace,
     BAR_1,
+}
+
+pub struct SoundBar {
+    pub paths: [String; 5],
+}
+
+impl SoundBar {
+    pub fn default() -> Self {
+        Self {
+            paths: std::array::from_fn(|_| String::new()),
+        }
+    }
+
+    pub fn new(beat_index: usize, memory_sequence: &[SoundEntry; 10]) -> Self {
+        let mut paths: [String; 5] = std::array::from_fn(|_| String::new());
+        let mut count = 0;
+
+        for sound in memory_sequence {
+            if sound.is_active_in_beat(beat_index) {
+                let path = sound.get_path_string();
+
+                if !path.is_empty() {
+                    paths[count] = path;
+                    count += 1;
+
+                    if count >= 5 {
+                        break;
+                    }
+                }
+            }
+        }
+
+        Self { paths }
+    }
 }
 
 pub struct App {
@@ -41,6 +75,10 @@ pub struct App {
     //File
     pub file_explorer: FileExplorer,
     pub selected_sound: PathBuf,
+    //Beats
+    pub beat_sequence: [SoundBar; 8],
+    // Debug/Console message
+    pub debug_message: String,
 }
 
 impl App {
@@ -63,6 +101,15 @@ impl App {
             self.small_counter = guard.small_counter;
             self.total_counter = guard.total_counter;
             self.is_master = guard.is_master;
+
+            for i in 0..8 {
+                self.beat_sequence[i] = SoundBar::new(i, &guard.sounds);
+            }
+            self.debug_message = guard.sounds[0].get_path_string()
+                + "Bit Mask: "
+                + &guard.sounds[0].assigned_slot.to_string()
+                + " SoundBarValue: "
+                + &self.beat_sequence[0].paths[0]
         }
     }
 
@@ -87,6 +134,8 @@ impl App {
             key_board_interactions: KeyBoardInteractions::new(),
             file_explorer: FileExplorer::new(),
             selected_sound: PathBuf::default(),
+            beat_sequence: std::array::from_fn(|_| SoundBar::default()),
+            debug_message: "".to_string(),
         })
     }
 

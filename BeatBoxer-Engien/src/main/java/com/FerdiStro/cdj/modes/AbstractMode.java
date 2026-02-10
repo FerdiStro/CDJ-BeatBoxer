@@ -86,7 +86,12 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     }
 
     private void sendTransferObject() {
-        TransferObject transferObject = new TransferObject(getCurrentBpm(), getSmallCounter(), getTotalCounter(), isMaster());
+        TransferObject transferObject = new TransferObject(
+                getCurrentBpm(),
+                getSmallCounter(),
+                getTotalCounter(),
+                isMaster(),
+                drumMachineCommandLine.getSmallGrid());
         this.memoryProvider.writeToMemory(transferObject);
     }
 

@@ -1,8 +1,12 @@
-use ratatui::Frame;
+use crate::app::app::App;
 use ratatui::layout::Rect;
 use ratatui::widgets::Block;
-use crate::app::app::App;
+use ratatui::Frame;
 
 pub fn render_utils_section(frame: &mut Frame, area: Rect, app: &App) {
-    frame.render_widget(Block::bordered().title("Utils"), area);
+    let message = "Debug: ".to_string() + &app.debug_message;
+
+    // let message    =  app.beat_sequence[1]
+
+    frame.render_widget(Block::default().title(message), area);
 }
