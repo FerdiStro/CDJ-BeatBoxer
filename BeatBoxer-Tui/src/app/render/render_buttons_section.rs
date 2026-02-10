@@ -2,11 +2,11 @@ use crate::app::app::App;
 use crate::app::buttons::{Button, SecondControlButton};
 use ratatui::layout::Constraint::{Fill, Length};
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
-use ratatui::widgets::{Block, Paragraph};
+use ratatui::style::Color;
+use ratatui::widgets::Paragraph;
 use ratatui::Frame;
 
 pub fn render_buttons_section(frame: &mut Frame, area: Rect, app: &App) {
-
     let [button_area, numbers_area, big_button_area] = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Length(3), Length(1), Fill(0)])
@@ -52,7 +52,32 @@ fn render_control_buttons(frame: &mut Frame, area: Rect, app: &App) {
         .constraints([Length(8), Length(8), Length(8)])
         .areas(area);
 
-    SecondControlButton::render_button(app, frame, button_1, SecondControlButton::BarLock);
-    SecondControlButton::render_button(app, frame, button_2, SecondControlButton::PreviousBar);
-    SecondControlButton::render_button(app, frame, button_3, SecondControlButton::NextBar);
+    let [is_lock_active_color, is_lock_inactive_flag_color] = if app.is_lock {
+        [Color::Red, Color::Gray]
+    } else {
+        [Color::White, Color::White]
+    };
+
+    SecondControlButton::render_button_color(
+        app,
+        frame,
+        button_1,
+        SecondControlButton::BarLock,
+        is_lock_active_color,
+    );
+
+    SecondControlButton::render_button_color(
+        app,
+        frame,
+        button_2,
+        SecondControlButton::PreviousBar,
+        is_lock_inactive_flag_color,
+    );
+    SecondControlButton::render_button_color(
+        app,
+        frame,
+        button_3,
+        SecondControlButton::NextBar,
+        is_lock_inactive_flag_color,
+    );
 }

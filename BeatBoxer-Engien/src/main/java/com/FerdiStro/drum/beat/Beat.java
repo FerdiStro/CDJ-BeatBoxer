@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 public class Beat {
     protected static final Logger log = LogManager.getLogger();
     private static final int MAX_SAMPLER_SIZE = 5;
+//    private static final String SAMPLE_KICK = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Sounds/KICK_20.wav";
     private final Sampler[] samplers;
     private final Minim minim;
     private final Summer mixer;

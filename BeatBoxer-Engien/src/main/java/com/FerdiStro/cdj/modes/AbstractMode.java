@@ -2,9 +2,12 @@ package com.FerdiStro.cdj.modes;
 
 import com.FerdiStro.LogUtils;
 import com.FerdiStro.drum.DrumMachine;
+import com.FerdiStro.drum.command.DrumCommand;
+import com.FerdiStro.drum.command.DrumCommandObject;
 import com.FerdiStro.memory.SharedMemoryProvider;
 import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import com.FerdiStro.memory.bus.MemoryUpdateListener;
+import com.FerdiStro.memory.objects.ReceivedData;
 import com.FerdiStro.memory.objects.TransferObject;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 public abstract class AbstractMode implements MemoryUpdateListener {
 
     protected static final Logger log = LogManager.getLogger();
-    private static final String SAMPLE_KICK = "/home/ferdinoond/CDJ-BeatBoxer/KICK_20.wav";
     protected SharedMemoryProvider memoryProvider;
     @Getter
     private boolean smallBeat = true;
@@ -92,6 +94,12 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     public void onMemoryUpdate(MemoryUpdateCommand command) {
         switch (command) {
             case SMALL_BEAT -> this.smallBeat = !this.smallBeat;
+            case ADD_BEAT_SMALL -> {
+                ReceivedData lastData = memoryProvider.getLastData();
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.ADD_SOUND, lastData.getSmallCounter(), lastData.getSelectedSoundPath());
+                drumMachineCommandLine.onCommand(drumCommandObject);
+
+            }
             default -> onMemoryUpdateImpl(command);
         }
     }

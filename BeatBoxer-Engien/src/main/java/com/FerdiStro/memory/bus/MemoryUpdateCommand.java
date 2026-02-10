@@ -7,4 +7,6 @@ public enum MemoryUpdateCommand {
     INCREASE_BPM,
     DECREASE_BPM,
     SMALL_BEAT,
+    ADD_BEAT_SMALL
+
 }

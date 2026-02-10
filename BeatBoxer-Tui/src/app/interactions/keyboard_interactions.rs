@@ -13,41 +13,38 @@ impl KeyBoardInteractions {
     }
 
     pub fn on_key_code(&mut self, code: KeyCode) -> [AppAction; 2] {
-        let mut first_return: AppAction = AppAction::None;
-        match code {
-            KeyCode::Char('q') => first_return = AppAction::Quit,
+        [
+            match code {
+                KeyCode::Char('q') => AppAction::Quit,
+                KeyCode::Char('1') => AppAction::BAR_1,
+                KeyCode::Right => {
+                    self.first_control_button_last = true;
+                    AppAction::NextMode
+                }
 
-            KeyCode::Right => {
-                self.first_control_button_last = true;
-                first_return = AppAction::NextMode;
-            }
+                KeyCode::Left => {
+                    self.first_control_button_last = true;
+                    AppAction::PreviousMode
+                }
 
-            KeyCode::Left => {
-                self.first_control_button_last = true;
-                first_return = AppAction::PreviousMode
-            }
+                KeyCode::Up => {
+                    self.first_control_button_last = false;
+                    AppAction::NextMode
+                }
+                KeyCode::Down => {
+                    self.first_control_button_last = false;
+                    AppAction::PreviousMode
+                }
+                KeyCode::Backspace => AppAction::Backspace,
 
-            KeyCode::Up => {
-                self.first_control_button_last = false;
-                first_return = AppAction::NextMode
-            }
-            KeyCode::Down => {
-                self.first_control_button_last = false;
-                first_return = AppAction::PreviousMode
-            }
-            KeyCode::Backspace => {
-                first_return = AppAction::Backspace
-            }
-            
-            KeyCode::Enter => first_return = AppAction::Submit,
-            _ => first_return = AppAction::None,
-        }
-        let second_return = if self.first_control_button_last {
-            AppAction::FirstMode
-        } else {
-            AppAction::SecondMode
-        };
-
-        [first_return, second_return]
+                KeyCode::Enter => AppAction::Submit,
+                _ => AppAction::None,
+            },
+            if self.first_control_button_last {
+                AppAction::FirstMode
+            } else {
+                AppAction::SecondMode
+            },
+        ]
     }
 }

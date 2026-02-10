@@ -1,3 +1,5 @@
+import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
+
 plugins {
   id("java")
   id("application")
@@ -29,6 +31,18 @@ dependencies {
   implementation("ddf.minim:ddf.minim:2.2.0")
 }
 
+
+//tasks.register<JavaExec>("run") {
+//  group = "application"
+//  description = "Run Drum machine for Tests"
+//
+//}
+//tasks.register('runMinimal', JavaExec) {
+//  group = 'application'
+//  description = 'Runs MinimalRunner.Main'
+//  classpath = sourceSets.main.runtimeClasspath
+//  mainClass = 'MinimalRunner.Main'
+//}
 
 application {
   mainClass = "com.FerdiStro.Main"

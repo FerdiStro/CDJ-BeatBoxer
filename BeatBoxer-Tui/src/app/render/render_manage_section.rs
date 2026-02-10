@@ -19,11 +19,11 @@ pub fn render_manage_section(frame: &mut Frame, area: Rect, app: &mut App) {
         .constraints([Ratio(1, 8), Ratio(7, 8)])
         .areas(inner_area);
 
-    render_controll_Section(frame, control_section, app);
+    render_control_section(frame, control_section, app);
     FileExplorer::render_files(app, frame, browse_section)
 }
 
-fn render_controll_Section(frame: &mut Frame, control_section: Rect, app: &App) {
+fn render_control_section(frame: &mut Frame, control_section: Rect, app: &App) {
     let [bpm, adjust_section, master_button] = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Ratio(1, 3), Ratio(1, 3), Ratio(1, 3)])

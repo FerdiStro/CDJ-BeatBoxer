@@ -2,7 +2,10 @@ package com.FerdiStro.memory;
 
 import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import com.FerdiStro.memory.bus.MemoryUpdateListener;
+import com.FerdiStro.memory.objects.ReceivedData;
 import com.FerdiStro.memory.objects.TransferObject;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +31,8 @@ public class SharedMemoryProvider {
     private FileChannel fromEngienChannel;
     private MappedByteBuffer fromEngienBuffer;
     private long fromEngienCounter = 0;
-
+    @Getter
+    private ReceivedData lastData;
 
     private SharedMemoryProvider() {
 
@@ -80,7 +84,16 @@ public class SharedMemoryProvider {
 
         //Reading part
         HighPerfReader reader = new HighPerfReader(TO_ENGIEN_SHM, FILE_LENGTH, data -> {
+            this.lastData = data;
             log.debug(data);
+
+            if (!data.getSelectedSoundPath().isBlank()) {
+                if (data.isAddSoundOnSmallBeat()) {
+                    notifyMemoryUpdateListeners(MemoryUpdateCommand.ADD_BEAT_SMALL);
+                }
+
+                return;
+            }
 
             if (data.isBecomeMaster()) {
                 notifyMemoryUpdateListeners(MemoryUpdateCommand.BECOME_MASTER);

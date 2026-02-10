@@ -6,6 +6,7 @@ use ratatui::layout::Rect;
 use ratatui::prelude::{Color, Style};
 use ratatui::widgets::{Block, Paragraph};
 use ratatui::Frame;
+use std::str::FromStr;
 
 pub trait Button {
     fn label(&self) -> &str;
@@ -13,8 +14,8 @@ pub trait Button {
     fn get_first_mode() -> Self;
     fn get_button_style(&self, app: &App) -> Style;
 
-    fn next(&self) -> Self;
-    fn previous(&self) -> Self;
+    fn next(&self, exclude: &[&Self]) -> Self;
+    fn previous(&self, exclude: &[&Self]) -> Self;
     fn submit(&self, memory: &Memory);
 
     fn render_button(app: &App, frame: &mut Frame, area: Rect, button_type: impl Button) {
@@ -86,7 +87,7 @@ impl Button for FirstControlButton {
     }
 
     fn get_first_mode() -> FirstControlButton {
-        FirstControlButton::Settings
+        FirstControlButton::FileBrowser
     }
 
     fn get_button_style(&self, app: &App) -> Style {
@@ -98,7 +99,7 @@ impl Button for FirstControlButton {
         }
     }
 
-    fn next(&self) -> Self {
+    fn next(&self, exclude: &[&FirstControlButton]) -> Self {
         match self {
             FirstControlButton::Settings => FirstControlButton::DecreaseBpm,
             FirstControlButton::DecreaseBpm => FirstControlButton::IncreaseBpm,
@@ -108,7 +109,7 @@ impl Button for FirstControlButton {
         }
     }
 
-    fn previous(&self) -> Self {
+    fn previous(&self, exclude: &[&FirstControlButton]) -> Self {
         match self {
             FirstControlButton::Settings => FirstControlButton::FileBrowser,
             FirstControlButton::BecomeMaster => FirstControlButton::IncreaseBpm,
@@ -120,6 +121,7 @@ impl Button for FirstControlButton {
 
     fn submit(&self, memory: &Memory) {
         let mut send_object = SendObject::default();
+
         match self {
             FirstControlButton::Settings => return,
             FirstControlButton::DecreaseBpm => send_object.decrease_bpm = true,
@@ -161,35 +163,54 @@ impl Button for SecondControlButton {
         }
     }
 
-    fn next(&self) -> Self {
-        match self {
-            SecondControlButton::BarLock => SecondControlButton::PreviousBar,
-            SecondControlButton::PreviousBar => SecondControlButton::NextBar,
-            SecondControlButton::NextBar => SecondControlButton::BAR_1,
-            SecondControlButton::BAR_1 => SecondControlButton::BAR_2,
-            SecondControlButton::BAR_2 => SecondControlButton::BAR_3,
-            SecondControlButton::BAR_3 => SecondControlButton::BAR_4,
-            SecondControlButton::BAR_4 => SecondControlButton::BAR_5,
-            SecondControlButton::BAR_5 => SecondControlButton::BAR_6,
-            SecondControlButton::BAR_6 => SecondControlButton::BAR_7,
-            SecondControlButton::BAR_7 => SecondControlButton::BAR_8,
-            SecondControlButton::BAR_8 => SecondControlButton::BarLock,
+    fn next(&self, exclude: &[&SecondControlButton]) -> Self {
+        let mut candidate = *self;
+
+        loop {
+            candidate = match candidate {
+                SecondControlButton::BarLock => SecondControlButton::PreviousBar,
+                SecondControlButton::PreviousBar => SecondControlButton::NextBar,
+                SecondControlButton::NextBar => SecondControlButton::BAR_1,
+                SecondControlButton::BAR_1 => SecondControlButton::BAR_2,
+                SecondControlButton::BAR_2 => SecondControlButton::BAR_3,
+                SecondControlButton::BAR_3 => SecondControlButton::BAR_4,
+                SecondControlButton::BAR_4 => SecondControlButton::BAR_5,
+                SecondControlButton::BAR_5 => SecondControlButton::BAR_6,
+                SecondControlButton::BAR_6 => SecondControlButton::BAR_7,
+                SecondControlButton::BAR_7 => SecondControlButton::BAR_8,
+                SecondControlButton::BAR_8 => SecondControlButton::BarLock,
+            };
+            if !exclude.contains(&&candidate) {
+                return candidate;
+            }
+            if candidate == *self {
+                return *self;
+            }
         }
     }
 
-    fn previous(&self) -> Self {
-        match self {
-            SecondControlButton::BarLock => SecondControlButton::BAR_8,
-            SecondControlButton::PreviousBar => SecondControlButton::BarLock,
-            SecondControlButton::NextBar => SecondControlButton::PreviousBar,
-            SecondControlButton::BAR_1 => SecondControlButton::NextBar,
-            SecondControlButton::BAR_2 => SecondControlButton::BAR_1,
-            SecondControlButton::BAR_3 => SecondControlButton::BAR_2,
-            SecondControlButton::BAR_4 => SecondControlButton::BAR_3,
-            SecondControlButton::BAR_5 => SecondControlButton::BAR_4,
-            SecondControlButton::BAR_6 => SecondControlButton::BAR_5,
-            SecondControlButton::BAR_7 => SecondControlButton::BAR_6,
-            SecondControlButton::BAR_8 => SecondControlButton::BAR_7,
+    fn previous(&self, exclude: &[&SecondControlButton]) -> Self {
+        let mut candidate = *self;
+        loop {
+            candidate = match candidate {
+                SecondControlButton::BarLock => SecondControlButton::BAR_8,
+                SecondControlButton::PreviousBar => SecondControlButton::BarLock,
+                SecondControlButton::NextBar => SecondControlButton::PreviousBar,
+                SecondControlButton::BAR_1 => SecondControlButton::NextBar,
+                SecondControlButton::BAR_2 => SecondControlButton::BAR_1,
+                SecondControlButton::BAR_3 => SecondControlButton::BAR_2,
+                SecondControlButton::BAR_4 => SecondControlButton::BAR_3,
+                SecondControlButton::BAR_5 => SecondControlButton::BAR_4,
+                SecondControlButton::BAR_6 => SecondControlButton::BAR_5,
+                SecondControlButton::BAR_7 => SecondControlButton::BAR_6,
+                SecondControlButton::BAR_8 => SecondControlButton::BAR_7,
+            };
+            if !exclude.contains(&&candidate) {
+                return candidate;
+            }
+            if candidate == *self {
+                return *self;
+            }
         }
     }
 
@@ -198,16 +219,25 @@ impl Button for SecondControlButton {
 
 impl SecondControlButton {
     pub fn render_bar_button(self, app: &App, frame: &mut Frame, area: Rect) {
-        let style = if app.second_control_mode.label() == self.label()
-            && !app.key_board_interactions.first_control_button_last
-        {
+        let bar_index = u8::from_str(self.label()).unwrap();
+        let style = if app.bar_counter == bar_index {
             Style::default().bg(Color::Red)
         } else {
             Style::default().fg(Color::Gray)
         };
 
-        let widget = Block::bordered().style(style);
+        let select_test = if app.second_control_mode.label() == self.label()
+            && !app.key_board_interactions.first_control_button_last
+        {
+            "🔊"
+        } else {
+            ""
+        };
 
+        let widget = Paragraph::new(select_test)
+            .block(Block::bordered().style(style))
+            .style(style)
+            .centered();
         frame.render_widget(widget, area);
     }
 }

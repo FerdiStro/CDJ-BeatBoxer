@@ -5,12 +5,51 @@ use std::sync::{Arc, Mutex};
 use std::{hint, thread};
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Copy, Clone)]
 pub struct SendObject {
     pub sequence: u64,
     pub increase_bpm: bool,
     pub decrease_bpm: bool,
     pub become_master: bool,
+    _padding: [u8; 3],
+    pub small_counter: u8,
+    pub add_sound_on_small_beat: bool,
+    pub selected_sound_path: [u8; 256],
+}
+
+impl SendObject {
+    pub fn default() -> Self {
+        Self::new(0, false, false, false, "", 0, false)
+    }
+
+    pub fn new(
+        sequence: u64,
+        increase: bool,
+        decrease: bool,
+        master: bool,
+        path: &str,
+        small_counter: u8,
+        add_sound_on_small_beat: bool,
+    ) -> Self {
+        let mut path_bytes = [0u8; 256];
+
+        let bytes = path.as_bytes();
+
+        let len = std::cmp::min(bytes.len(), 256);
+
+        path_bytes[..len].copy_from_slice(&bytes[..len]);
+
+        Self {
+            sequence,
+            increase_bpm: increase,
+            decrease_bpm: decrease,
+            become_master: master,
+            _padding: [0; 3],
+            small_counter,
+            add_sound_on_small_beat,
+            selected_sound_path: path_bytes,
+        }
+    }
 }
 
 #[repr(C)]
@@ -73,11 +112,24 @@ impl Memory {
                             let increase_bpm_ptr = ptr.add(8) as *mut bool;
                             std::ptr::write_volatile(increase_bpm_ptr, data.increase_bpm);
 
-                            let increase_bpm_ptr = ptr.add(9) as *mut bool;
-                            std::ptr::write_volatile(increase_bpm_ptr, data.decrease_bpm);
+                            let decrease_bpm_ptr = ptr.add(9) as *mut bool;
+                            std::ptr::write_volatile(decrease_bpm_ptr, data.decrease_bpm);
 
-                            let increase_bpm_ptr = ptr.add(10) as *mut bool;
-                            std::ptr::write_volatile(increase_bpm_ptr, data.become_master);
+                            let become_master_ptr = ptr.add(10) as *mut bool;
+                            std::ptr::write_volatile(become_master_ptr, data.become_master);
+
+                            let small_counter_ptr = ptr.add(14);
+                            std::ptr::write_volatile(small_counter_ptr, data.small_counter);
+
+                            let add_sound_on_small_beat_ptr = ptr.add(15) as *mut bool;
+                            std::ptr::write_volatile(
+                                add_sound_on_small_beat_ptr,
+                                data.add_sound_on_small_beat,
+                            );
+
+                            let path_dest_ptr = ptr.add(16);
+                            let path_src_ptr = data.selected_sound_path.as_ptr();
+                            std::ptr::copy_nonoverlapping(path_src_ptr, path_dest_ptr, 256);
 
                             let seq_ptr = ptr as *mut u64;
                             std::ptr::write_volatile(seq_ptr, sequence);

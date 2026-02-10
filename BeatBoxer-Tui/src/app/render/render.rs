@@ -1,16 +1,18 @@
 use crate::app::app::{App, AppAction};
 use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
+use crate::app::memory::memory::SendObject;
 use crate::app::render::render_buttons_section::render_buttons_section;
 use crate::app::render::render_header_section::render_header_section;
 use crate::app::render::render_manage_section::render_manage_section;
 use crate::app::render::render_render_section::render_render_section;
+use crate::app::render::render_utils_section::render_utils_section;
 use crossterm::event;
 use crossterm::event::{Event, KeyEventKind};
-use ratatui::layout::Constraint::Ratio;
+use ratatui::layout::Constraint::{Fill, Length, Ratio};
 use ratatui::layout::{Constraint, Direction, Flex, Layout, Rect};
 use ratatui::Frame;
+use std::path::PathBuf;
 use std::time::Duration;
-use crate::app::render::render_utils_section::render_utils_section;
 
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Render {}
@@ -27,6 +29,21 @@ impl Render {
 
                         match action {
                             AppAction::Quit => break Ok(()),
+                            AppAction::BAR_1 => {
+                                if app.selected_sound != PathBuf::default() {
+                                    let mut send_object = SendObject::default();
+                                    let path_str = app.selected_sound.to_str().unwrap_or("");
+                                    let bytes = path_str.as_bytes();
+                                    let len = std::cmp::min(bytes.len(), 256);
+                                    send_object.selected_sound_path[..len]
+                                        .copy_from_slice(&bytes[..len]);
+                                    send_object.add_sound_on_small_beat = true;
+                                    send_object.small_counter = 1;
+                                    app.memory.sender.send(send_object).unwrap();
+                                    ()
+                                }
+                            }
+
                             AppAction::NextMode => app.next_mode(state),
                             AppAction::PreviousMode => app.previous_mode(state),
                             AppAction::Submit => match state {
@@ -109,7 +126,7 @@ fn render(frame: &mut Frame, app: &mut App) {
 
     let content_horizon = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Ratio(1, 8), Ratio(3, 8), Ratio(2, 8), Ratio(2, 8)]);
+        .constraints([Ratio(1, 8), Ratio(3, 8), Length(7), Fill(0)]);
 
     let [header_grid, audio_render_grid, button_grid, utils_grid] =
         content_horizon.areas(content_grid);
