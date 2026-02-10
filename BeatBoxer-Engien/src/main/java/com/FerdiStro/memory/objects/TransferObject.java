@@ -47,11 +47,6 @@ public class TransferObject {
         this.totalCounter = totalCounter;
         this.master = master;
         this.transferBeatData = fromBeats(beats);
-
-
-        if (this.transferBeatData[0] != null) {
-            log.warn("BitMask: {}", this.transferBeatData[0].activeBeatMask);
-        }
     }
 
     public void writeMappedByteBuffer(MappedByteBuffer buffer, long sequence) {

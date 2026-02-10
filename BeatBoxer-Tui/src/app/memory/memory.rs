@@ -2,7 +2,7 @@ use crossbeam_channel::{bounded, Sender};
 use memmap2::MmapMut;
 use std::fs::OpenOptions;
 use std::sync::{Arc, Mutex};
-use std::{hint, thread};
+use std::{env, hint, thread};
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -125,20 +125,21 @@ pub struct Memory {
 
 impl Memory {
     pub fn new(shared_state: Arc<Mutex<ReceiveObject>>) -> Memory {
-        Self::start_reading_thread(shared_state);
-        let sender = Self::start_writing_thread();
+        let reading_path = env::var("BEATBOXER_READ_PATH")
+            .expect("CRITICAL: 'BEATBOXER_READ_PATH' not set in ENV!");
+
+        let writing_path = env::var("BEATBOXER_WRITE_PATH")
+            .expect("CRITICAL: 'BEATBOXER_WRITE_PATH' not set in ENV!");
+
+        Self::start_reading_thread(reading_path, shared_state);
+        let sender = Self::start_writing_thread(writing_path);
         Self { sender }
     }
-    const FILE_PATH_WRITING: &str =
-        "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/toEngien_shm.bin";
-    const FILE_PATH_READING: &str =
-        "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/fromEngien_shm.bin";
-    // const FILE_PATH_READING: &str = "/Users/maintenance/Projects/CDJ-BeatBoxer/fromEngien_shm.bin";
-    // const FILE_PATH_WRITING: &str = "/Users/maintenance/Projects/CDJ-BeatBoxer/toEngien_shm.bin";
+
 
     const FILE_SIZE: u64 = 4096;
 
-    fn start_writing_thread() -> Sender<SendObject> {
+    fn start_writing_thread(writing_path: String) -> Sender<SendObject> {
         let (tx, rx) = bounded::<SendObject>(1024);
 
         thread::spawn(move || {
@@ -147,7 +148,7 @@ impl Memory {
                 .read(true)
                 .write(true)
                 .create(true)
-                .open(Self::FILE_PATH_WRITING)
+                .open(writing_path)
                 .expect("Can't open file");
 
             if file.metadata().unwrap().len() < Self::FILE_SIZE {
@@ -203,12 +204,9 @@ impl Memory {
         tx
     }
 
-    fn start_reading_thread(thread_shared_data: Arc<Mutex<ReceiveObject>>) {
+    fn start_reading_thread(reading_path: String, thread_shared_data: Arc<Mutex<ReceiveObject>>) {
         thread::spawn(move || {
-            let file_result = OpenOptions::new()
-                .read(true)
-                .write(true)
-                .open(Self::FILE_PATH_READING);
+            let file_result = OpenOptions::new().read(true).write(true).open(reading_path);
 
             let file = match file_result {
                 Ok(file) => file,

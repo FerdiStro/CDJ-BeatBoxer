@@ -168,7 +168,7 @@ impl App {
         match state {
             AppAction::FirstMode => match self.first_control_mode {
                 FirstControlButton::FileBrowser => {
-                    if (self.file_explorer.isStart()) {
+                    if (self.file_explorer.is_start()) {
                         self.first_control_mode = self.first_control_mode.previous(&[])
                     } else {
                         self.file_explorer.previous();

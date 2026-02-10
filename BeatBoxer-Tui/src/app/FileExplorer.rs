@@ -1,7 +1,7 @@
 use ratatui::layout::Rect;
 use ratatui::widgets::ListState;
-use std::fs;
 use std::path::PathBuf;
+use std::{env, fs};
 
 use crate::app::app::App;
 use ratatui::style::{Color, Modifier, Style};
@@ -14,9 +14,6 @@ pub struct FileExplorer {
 }
 
 impl FileExplorer {
-    // const FOLDER_SOURCE: &str  = "/Users/maintenance/Projects/CDJ-BeatBoxer/BeatBoxer-Sounds";
-    const SOUND_LIB_FOLDER: &str = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Sounds";
-
     pub fn render_files(app: &mut App, frame: &mut ratatui::Frame, area: Rect) {
         let items: Vec<ListItem> = app
             .file_explorer
@@ -69,8 +66,11 @@ impl FileExplorer {
     }
 
     pub fn new() -> Self {
+        let sound_lib_folder = env::var("BEATBOXER_FILE_EXPLORER_PATH")
+            .expect("CRITICAL: 'BEATBOXER_FILE_EXPLORER_PATH' not set in ENV!");
+
         let mut explorer = Self {
-            current_dir: PathBuf::from(Self::SOUND_LIB_FOLDER),
+            current_dir: PathBuf::from(sound_lib_folder),
             items: vec![],
             state: ListState::default(),
         };
@@ -108,7 +108,7 @@ impl FileExplorer {
         self.state.select(Some(i));
     }
 
-    pub fn isStart(&self) -> bool {
+    pub fn is_start(&self) -> bool {
         self.state.selected() == Some(0)
     }
 
