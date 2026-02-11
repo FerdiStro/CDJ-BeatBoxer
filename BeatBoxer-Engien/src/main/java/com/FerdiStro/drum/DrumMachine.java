@@ -69,9 +69,9 @@ public class DrumMachine {
     }
 
     private void updateValidBeat(int beatPos, Beat beat) {
-
         if (this.mode.isSmallBeat() && beatPos < smallGrid.length) {
             this.smallGrid[beatPos] = beat;
+            this.mode.sendMemoryUpdate();
             return;
         }
         log.error("Update Big-Beat-Grid: {}", LogUtils.NOT_IMPLEMENTED);
@@ -91,6 +91,7 @@ public class DrumMachine {
             beat.removeSample(drumCommandObject.getFileName());
             updateValidBeat(drumCommandObject.getBeatPosition(), beat);
         });
+        drumSounds.put(DrumCommand.IGNORE, drumCommandObject -> log.info("Command ignored"));
     }
 
 

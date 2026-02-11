@@ -27,7 +27,7 @@ impl DevState {
     const FILE_PATH_WRITING_PROD: &str =
         "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/toEngien_shm.bin";
     const FILE_PATH_READING_PROD: &str =
-        "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/set_Beat_first_state.bin";
+        "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/fromEngien_shm.bin";
     const SOUND_LIB_FOLDER_PROD: &str = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Sounds";
     const SOUND_LIB_FOLDER_DEV: &str = "/Users/maintenance/Projects/CDJ-BeatBoxer/BeatBoxer-Sounds";
     const FILE_IGNORE_WRITING: &str = "ui_states/ignore_writing.bin";

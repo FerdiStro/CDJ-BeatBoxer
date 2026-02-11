@@ -65,17 +65,17 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     }
 
     public void onMasterChange() {
-        this.sendTransferObject();
+        this.sendMemoryUpdate();
     }
 
     public void onTempoChange() {
-        this.sendTransferObject();
+        this.sendMemoryUpdate();
     }
 
     public void onBeat(int barPosition) {
         this.smallCounter = (byte) (barPosition - 1);
         this.drumMachineCommandLine.onBeat(this.smallCounter);
-        this.sendTransferObject();
+        this.sendMemoryUpdate();
     }
 
     public void printAnalytics() {
@@ -85,7 +85,7 @@ public abstract class AbstractMode implements MemoryUpdateListener {
         log.info(LogUtils.LINE_SEPARATOR);
     }
 
-    private void sendTransferObject() {
+    public void sendMemoryUpdate() {
         TransferObject transferObject = new TransferObject(getCurrentBpm(), getSmallCounter(), getTotalCounter(), isMaster(), drumMachineCommandLine.getSmallGrid());
         this.memoryProvider.writeToMemory(transferObject);
     }
@@ -102,7 +102,7 @@ public abstract class AbstractMode implements MemoryUpdateListener {
 
             }
             case REMOVE_BEAT_SMALL -> {
-                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.REMOVE_SOUND, lastData.getSmallCounter(), lastData.getSelectedSoundPath());
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.REMOVE_SOUND, lastData.getSmallCounter(), lastData.getRemoveSoundPath());
                 drumMachineCommandLine.onCommand(drumCommandObject);
             }
             default -> onMemoryUpdateImpl(command);

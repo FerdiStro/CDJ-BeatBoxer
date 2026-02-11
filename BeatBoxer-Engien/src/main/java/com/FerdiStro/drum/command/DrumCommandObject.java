@@ -15,13 +15,13 @@ public class DrumCommandObject {
     private String fileName;
 
     public DrumCommandObject(DrumCommand command, int beatPosition, String filePath) {
-        if (command != DrumCommand.ADD_SOUND) {
+        if (command != DrumCommand.ADD_SOUND && command != DrumCommand.REMOVE_SOUND) {
             this.message = "Wrong constructor. Command should be ignored";
             this.command = DrumCommand.IGNORE;
             return;
         }
         this.command = command;
-        this.message = "Add sound (Command: " + command + ") with filePath: " + filePath + " to beat " + beatPosition;
+        this.message = "Add/Remove sound (Command: " + command + ") with filePath: " + filePath + " to beat " + beatPosition;
         this.beatPosition = beatPosition;
         this.fileName = filePath;
     }
@@ -30,7 +30,6 @@ public class DrumCommandObject {
     public String toString() {
         return message;
     }
-
 
 
 }
