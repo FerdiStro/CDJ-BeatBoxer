@@ -23,18 +23,29 @@ pub enum AppAction {
 
 pub struct SoundBar {
     pub paths: [String; 5],
+    pub size: u8,
 }
 
 impl SoundBar {
     pub fn default() -> Self {
         Self {
             paths: std::array::from_fn(|_| String::new()),
+            size: 0,
+        }
+    }
+
+    pub fn clone(&self) -> Self {
+        Self {
+            paths: self.paths.clone(),
+            size: self.size,
         }
     }
 
     pub fn new(beat_index: usize, memory_sequence: &[SoundEntry; 10]) -> Self {
         let mut paths: [String; 5] = std::array::from_fn(|_| String::new());
         let mut count = 0;
+
+        let mut size = 0;
 
         for sound in memory_sequence {
             if sound.is_active_in_beat(beat_index) {
@@ -43,7 +54,7 @@ impl SoundBar {
                 if !path.is_empty() {
                     paths[count] = path;
                     count += 1;
-
+                    size += 1;
                     if count >= 5 {
                         break;
                     }
@@ -51,7 +62,7 @@ impl SoundBar {
             }
         }
 
-        Self { paths }
+        Self { paths, size }
     }
 }
 
@@ -72,6 +83,7 @@ pub struct App {
     pub first_control_mode: FirstControlButton,
     pub second_control_mode: SecondControlButton,
     pub key_board_interactions: KeyBoardInteractions,
+    pub key_help_counter: u8,
     //File
     pub file_explorer: FileExplorer,
     pub selected_sound: PathBuf,
@@ -132,6 +144,7 @@ impl App {
             is_lock: true,
             memory,
             key_board_interactions: KeyBoardInteractions::new(),
+            key_help_counter: 0,
             file_explorer: FileExplorer::new(),
             selected_sound: PathBuf::default(),
             beat_sequence: std::array::from_fn(|_| SoundBar::default()),
@@ -151,6 +164,19 @@ impl App {
                 _ => self.first_control_mode = self.first_control_mode.next(&[]),
             },
             AppAction::SecondMode => {
+                match self.second_control_mode {
+                    //implement all other BAR_n
+                    SecondControlButton::BAR_1 => {
+                        if self.beat_sequence[0].size > self.key_help_counter {
+                            self.key_help_counter += 1;
+                            return;
+                        } else {
+                            self.key_help_counter = 0
+                        }
+                    }
+                    _ => self.key_help_counter = 0,
+                }
+
                 if (self.is_lock) {
                     self.second_control_mode = self.second_control_mode.next(&[
                         &SecondControlButton::PreviousBar,
@@ -190,5 +216,71 @@ impl App {
         }
     }
 
-    pub fn submit(&mut self) {}
+    pub fn submit(&mut self, state: AppAction) {
+        match state {
+            AppAction::FirstMode => match self.first_control_mode {
+                FirstControlButton::FileBrowser => {
+                    if let Some(index) = self.file_explorer.state.selected() {
+                        let selected_path = &self.file_explorer.items[index];
+                        if selected_path.to_string_lossy() == ".." {
+                            if let Some(parent) = self.file_explorer.current_dir.parent() {
+                                self.file_explorer.current_dir = parent.to_path_buf();
+                                self.file_explorer.read_dir();
+                            }
+                        } else if selected_path.is_dir() {
+                            self.file_explorer.current_dir = selected_path.clone();
+                            self.file_explorer.read_dir();
+                        } else {
+                            self.selected_sound = selected_path.clone();
+                        }
+                    }
+                }
+                _ => FirstControlButton::submit(&self.first_control_mode, &self.memory),
+            },
+            AppAction::SecondMode => match self.second_control_mode {
+                SecondControlButton::BAR_1 => SecondControlButton::BAR_1.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                SecondControlButton::BAR_2 => SecondControlButton::BAR_2.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                SecondControlButton::BAR_3 => SecondControlButton::BAR_3.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                SecondControlButton::BAR_4 => SecondControlButton::BAR_4.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                SecondControlButton::BAR_5 => SecondControlButton::BAR_5.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                SecondControlButton::BAR_6 => SecondControlButton::BAR_6.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                SecondControlButton::BAR_7 => SecondControlButton::BAR_7.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                SecondControlButton::BAR_8 => SecondControlButton::BAR_8.remove_bar_submit(
+                    self.key_help_counter,
+                    &self.beat_sequence,
+                    &self.memory,
+                ),
+                _ => SecondControlButton::submit(&self.second_control_mode, &self.memory),
+            },
+            _ => {}
+        }
+    }
 }

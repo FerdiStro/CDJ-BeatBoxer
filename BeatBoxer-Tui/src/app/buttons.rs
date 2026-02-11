@@ -1,4 +1,4 @@
-use crate::app::app::App;
+use crate::app::app::{App, SoundBar};
 use crate::app::memory::memory::{Memory, SendObject};
 use crate::app::render::render::Render;
 use color_eyre::owo_colors::OwoColorize;
@@ -6,6 +6,7 @@ use ratatui::layout::Rect;
 use ratatui::prelude::{Color, Style};
 use ratatui::widgets::{Block, Paragraph};
 use ratatui::Frame;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 pub trait Button {
@@ -218,6 +219,51 @@ impl Button for SecondControlButton {
 }
 
 impl SecondControlButton {
+    pub fn add_bar_submit(self, selected_sound_path: &PathBuf, memory: &Memory) {
+        let i: u8 = self.label().parse().expect("ERROR. No bar selected");
+
+        if selected_sound_path != &PathBuf::default() {
+            let mut send_object = SendObject::default();
+            let path_str = selected_sound_path.to_str().unwrap_or("");
+
+            send_object.selected_sound_path = SendObject::convert_string_byte(path_str);
+            send_object.add_sound_on_small_beat = true;
+            send_object.small_counter = i;
+
+            memory.sender.send(send_object).unwrap();
+        }
+    }
+
+    pub fn remove_bar_submit(
+        self,
+        sel_sound_index: u8,
+        beat_sequence: &[SoundBar; 8],
+        memory: &Memory,
+    ) {
+        let i: u8 = self.label().parse().expect("ERROR. No bar selected");
+        let sound_bar = beat_sequence
+            .get(i as usize)
+            .expect("ERROR. SoundBar must exist");
+
+        let remove_path = sound_bar
+            .paths
+            .get(sel_sound_index as usize - 1)
+            .expect("ERROR. Path must exist");
+
+        let file_name = Path::new(remove_path).to_str();
+
+        match file_name {
+            Some(path) => {
+                let mut send_object = SendObject::default();
+                send_object.remove_sound_on_small_beat = true;
+                send_object.remove_sound_path = SendObject::convert_string_byte(path);
+                send_object.small_counter = i;
+                memory.sender.send(send_object).unwrap();
+            }
+            None => return,
+        }
+    }
+
     pub fn render_bar_button(self, app: &App, frame: &mut Frame, area: Rect) {
         let bar_index = u8::from_str(self.label()).unwrap();
         let style = if app.bar_counter == bar_index {

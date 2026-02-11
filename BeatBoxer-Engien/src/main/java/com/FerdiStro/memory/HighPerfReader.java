@@ -14,17 +14,19 @@ import java.util.function.Consumer;
 public class HighPerfReader implements Runnable {
     private static final Logger log = LogManager.getLogger();
 
-    private final String FILE_PATH;
-    private final int FILE_SIZE;
+    private final String filePath;
+    private final int fileSize;
 
     private final Consumer<ReceivedData> dataCallback;
     private volatile boolean running = true;
 
-    public HighPerfReader(String filePath, int fileSize, Consumer<ReceivedData> dataCallback) {
-        this.FILE_PATH = filePath;
-        this.FILE_SIZE = fileSize;
-        this.dataCallback = dataCallback;
+    private FileChannel channel = null;
+    private MappedByteBuffer buffer = null;
 
+    public HighPerfReader(String filePath, int fileSize, Consumer<ReceivedData> dataCallback) {
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.dataCallback = dataCallback;
     }
 
 
@@ -32,20 +34,16 @@ public class HighPerfReader implements Runnable {
         this.running = false;
     }
 
-    @Override
-    public void run() {
-        log.info("SharedMemory-Reader started, waiting on Memory");
-        File file = new File(FILE_PATH);
+    private RandomAccessFile waitingForRaF() {
+        File file = new File(filePath);
         RandomAccessFile raf = null;
-        FileChannel channel = null;
-        MappedByteBuffer buffer = null;
 
         while (running) {
             try {
-                if (file.exists() && file.length() >= FILE_SIZE) {
+                if (file.exists() && file.length() >= fileSize) {
                     raf = new RandomAccessFile(file, "r");
                     channel = raf.getChannel();
-                    buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, FILE_SIZE);
+                    buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, fileSize);
                     buffer.order(ByteOrder.LITTLE_ENDIAN);
                     log.info("SharedMemory found");
                     break;
@@ -57,11 +55,23 @@ public class HighPerfReader implements Runnable {
                 log.error("Error on staring Reader:", e);
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException ignored) {
-                    //ignore
+                } catch (InterruptedException interruptedException) {
+                    log.error(interruptedException);
+                    Thread.currentThread().interrupt();
                 }
             }
         }
+
+        return raf;
+
+    }
+
+
+    @Override
+    public void run() {
+        log.info("SharedMemory-Reader started, waiting on Memory");
+
+        RandomAccessFile raF = waitingForRaF();
 
         if (buffer == null) return;
 
@@ -85,7 +95,7 @@ public class HighPerfReader implements Runnable {
 
         try {
             if (channel != null) channel.close();
-            if (raf != null) raf.close();
+            if (raF != null) raF.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

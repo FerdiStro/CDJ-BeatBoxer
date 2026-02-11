@@ -8,14 +8,19 @@ import java.nio.charset.StandardCharsets;
 
 @ToString
 public class ReceivedData {
+    private static final int STRING_LENGTH = 256;
+
     private static final int POSITION_INCREASE_BPM = 8;
     private static final int POSITION_DECREASE_BPM = 9;
     private static final int POSITION_BECOME_MASTER = 10;
 
     private static final int POSITION_SMALL_COUNTER = 14;
     private static final int POSITION_ADD_SOUND_ON_SMALL_BEAT = 15;
-    private static final int POSITION_OFF_PATH = 16;
-    private static final int POSITION_PATH_LEN = 256;
+    private static final int POSITION_START_SELECTED_SOUND_PATH = 16;
+
+    private static final int POSITION_REMOVE_SOUND_ON_SMALL_BEAT = 272;
+    private static final int POSITION_START_REMOVE_SOUND_PATH = 280;
+
 
     @Getter
     private final boolean increaseBpm;
@@ -31,6 +36,12 @@ public class ReceivedData {
     @Getter
     private final String selectedSoundPath;
 
+    @Getter
+    private final boolean removeSoundOnSmallBeat;
+    @Getter
+    private final String removeSoundPath;
+
+
     public ReceivedData(MappedByteBuffer buffer) {
         this.increaseBpm = byteToBoolean(buffer.get(ReceivedData.POSITION_INCREASE_BPM));
         this.decreaseBpm = byteToBoolean(buffer.get(ReceivedData.POSITION_DECREASE_BPM));
@@ -39,10 +50,19 @@ public class ReceivedData {
         this.smallCounter = Byte.toUnsignedInt(buffer.get(ReceivedData.POSITION_SMALL_COUNTER));
         this.addSoundOnSmallBeat = byteToBoolean(buffer.get(ReceivedData.POSITION_ADD_SOUND_ON_SMALL_BEAT));
 
-        byte[] rawBytes = new byte[POSITION_PATH_LEN];
-        buffer.position(POSITION_OFF_PATH);
-        buffer.get(rawBytes);
-        this.selectedSoundPath = parseNullTerminatedString(rawBytes);
+
+        this.selectedSoundPath = byteToString(buffer, POSITION_START_SELECTED_SOUND_PATH);
+
+        this.removeSoundOnSmallBeat = byteToBoolean(buffer.get(POSITION_REMOVE_SOUND_ON_SMALL_BEAT));
+        this.removeSoundPath = byteToString(buffer, POSITION_START_REMOVE_SOUND_PATH);
+
+    }
+
+    private String byteToString(MappedByteBuffer buffer, int stringStartPointer) {
+        byte[] stringByte = new byte[STRING_LENGTH];
+        buffer.position(stringStartPointer);
+        buffer.get(stringByte);
+        return parseNullTerminatedString(stringByte);
     }
 
 

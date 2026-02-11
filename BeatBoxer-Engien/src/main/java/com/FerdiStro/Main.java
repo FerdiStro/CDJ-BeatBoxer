@@ -27,9 +27,10 @@ public class Main {
         log.info(LogUtils.LINE_SEPARATOR);
         log.info(LogUtils.HEADER);
         log.info(LogUtils.LINE_SEPARATOR);
-        log.info("Java Working Directory: " + System.getProperty("user.dir"));
+        log.info("Java Working Directory: {}", System.getProperty("user.dir"));
 
-        SharedMemoryProvider.getInstance().start();
+        SharedMemoryProvider sharedMemoryProvider = SharedMemoryProvider.getInstance();
+        sharedMemoryProvider.start();
 
         NetWorkInfo netWorkInfo = NetWorkInfo.getInstance();
 
@@ -51,8 +52,10 @@ public class Main {
         beatMode.startUp();
         beatMode.printAnalytics();
 
-        new DrumMachine(beatMode);
+        DrumMachine drumMachine = new DrumMachine(beatMode);
+        beatMode.setDrumMachineCommandLine(drumMachine);
 
 
+        sharedMemoryProvider.setStopReading(false);
     }
 }

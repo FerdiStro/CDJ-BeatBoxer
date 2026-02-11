@@ -1,6 +1,5 @@
 use crate::app::app::{App, AppAction};
 use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
-use crate::app::memory::memory::SendObject;
 use crate::app::render::render_buttons_section::render_buttons_section;
 use crate::app::render::render_header_section::render_header_section;
 use crate::app::render::render_manage_section::render_manage_section;
@@ -11,7 +10,6 @@ use crossterm::event::{Event, KeyEventKind};
 use ratatui::layout::Constraint::{Fill, Length, Ratio};
 use ratatui::layout::{Constraint, Direction, Flex, Layout, Rect};
 use ratatui::Frame;
-use std::path::PathBuf;
 use std::time::Duration;
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -29,56 +27,11 @@ impl Render {
 
                         match action {
                             AppAction::Quit => break Ok(()),
-                            AppAction::BAR_1 => {
-                                if app.selected_sound != PathBuf::default() {
-                                    let mut send_object = SendObject::default();
-                                    let path_str = app.selected_sound.to_str().unwrap_or("");
-                                    let bytes = path_str.as_bytes();
-                                    let len = std::cmp::min(bytes.len(), 256);
-                                    send_object.selected_sound_path[..len]
-                                        .copy_from_slice(&bytes[..len]);
-                                    send_object.add_sound_on_small_beat = true;
-                                    send_object.small_counter = 0;
-                                    app.memory.sender.send(send_object).unwrap();
-                                    ()
-                                }
-                            }
-
+                            AppAction::BAR_1 => SecondControlButton::BAR_1
+                                .add_bar_submit(&app.selected_sound, &app.memory),
                             AppAction::NextMode => app.next_mode(state),
                             AppAction::PreviousMode => app.previous_mode(state),
-                            AppAction::Submit => match state {
-                                AppAction::FirstMode => match app.first_control_mode {
-                                    FirstControlButton::FileBrowser => {
-                                        if let Some(index) = app.file_explorer.state.selected() {
-                                            let selected_path = &app.file_explorer.items[index];
-                                            if selected_path.to_string_lossy() == ".." {
-                                                if let Some(parent) =
-                                                    app.file_explorer.current_dir.parent()
-                                                {
-                                                    app.file_explorer.current_dir =
-                                                        parent.to_path_buf();
-                                                    app.file_explorer.read_dir(); // Liste neu laden
-                                                }
-                                            } else if selected_path.is_dir() {
-                                                app.file_explorer.current_dir =
-                                                    selected_path.clone();
-                                                app.file_explorer.read_dir();
-                                            } else {
-                                                app.selected_sound = selected_path.clone();
-                                            }
-                                        }
-                                    }
-                                    _ => FirstControlButton::submit(
-                                        &app.first_control_mode,
-                                        &app.memory,
-                                    ),
-                                },
-                                AppAction::SecondMode => SecondControlButton::submit(
-                                    &app.second_control_mode,
-                                    &app.memory,
-                                ),
-                                _ => {}
-                            },
+                            AppAction::Submit => app.submit(state),
                             AppAction::Backspace => match app.first_control_mode {
                                 FirstControlButton::FileBrowser => {
                                     if let Some(parent) = app.file_explorer.current_dir.parent() {

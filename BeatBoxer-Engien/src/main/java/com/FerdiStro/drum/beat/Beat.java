@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 public class Beat {
     protected static final Logger log = LogManager.getLogger();
     private static final int MAX_SAMPLER_SIZE = 5;
-    //    private static final String SAMPLE_KICK = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Sounds/KICK_20.wav";
     private final Sampler[] samplers;
     @Getter
     private final String[] samplersNames;
@@ -22,6 +21,21 @@ public class Beat {
         this.samplersNames = new String[MAX_SAMPLER_SIZE];
         this.minim = minim;
         this.mixer = mixer;
+    }
+
+    public void removeSample(String filePath) {
+        boolean removed = false;
+        for (int i = 0; i < samplers.length; i++) {
+            if (samplersNames[i] != null && samplersNames[i].equals(filePath)) {
+                samplersNames[i] = null;
+                samplers[i] = null;
+                removed = true;
+                break;
+            }
+        }
+        if (!removed) {
+            log.error("Beat is Empty! Cannot remove sample: {}", filePath);
+        }
     }
 
     public void addSample(String filePath) {

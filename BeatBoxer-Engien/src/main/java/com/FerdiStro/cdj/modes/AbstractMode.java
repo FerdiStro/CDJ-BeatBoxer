@@ -86,24 +86,24 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     }
 
     private void sendTransferObject() {
-        TransferObject transferObject = new TransferObject(
-                getCurrentBpm(),
-                getSmallCounter(),
-                getTotalCounter(),
-                isMaster(),
-                drumMachineCommandLine.getSmallGrid());
+        TransferObject transferObject = new TransferObject(getCurrentBpm(), getSmallCounter(), getTotalCounter(), isMaster(), drumMachineCommandLine.getSmallGrid());
         this.memoryProvider.writeToMemory(transferObject);
     }
 
     @Override
     public void onMemoryUpdate(MemoryUpdateCommand command) {
+
+        ReceivedData lastData = memoryProvider.getLastData();
         switch (command) {
             case SMALL_BEAT -> this.smallBeat = !this.smallBeat;
             case ADD_BEAT_SMALL -> {
-                ReceivedData lastData = memoryProvider.getLastData();
                 DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.ADD_SOUND, lastData.getSmallCounter(), lastData.getSelectedSoundPath());
                 drumMachineCommandLine.onCommand(drumCommandObject);
 
+            }
+            case REMOVE_BEAT_SMALL -> {
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.REMOVE_SOUND, lastData.getSmallCounter(), lastData.getSelectedSoundPath());
+                drumMachineCommandLine.onCommand(drumCommandObject);
             }
             default -> onMemoryUpdateImpl(command);
         }

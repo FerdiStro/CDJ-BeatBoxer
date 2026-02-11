@@ -7,7 +7,7 @@ use color_eyre::Result;
 use dotenvy::dotenv;
 
 fn main() -> Result<()> {
-    let buf = dotenv().expect(".ENV can't load");
+    dotenv().expect(".ENV can't load");
 
     color_eyre::install()?;
 

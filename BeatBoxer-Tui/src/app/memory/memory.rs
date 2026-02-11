@@ -11,15 +11,26 @@ pub struct SendObject {
     pub increase_bpm: bool,
     pub decrease_bpm: bool,
     pub become_master: bool,
-    _padding: [u8; 3],
+    _padding_1: [u8; 3],
     pub small_counter: u8,
     pub add_sound_on_small_beat: bool,
     pub selected_sound_path: [u8; 256],
+    pub remove_sound_on_small_beat: bool,
+    _padding_2: [u8; 7],
+    pub remove_sound_path: [u8; 256],
 }
 
 impl SendObject {
     pub fn default() -> Self {
-        Self::new(0, false, false, false, "", 0, false)
+        Self::new(0, false, false, false, "", 0, false, false, "")
+    }
+
+    pub fn convert_string_byte(path: &str) -> [u8; 256] {
+        let mut path_bytes = [0u8; 256];
+        let path_bytes_b = path.as_bytes();
+        let len = std::cmp::min(path_bytes_b.len(), 256);
+        path_bytes[..len].copy_from_slice(&path_bytes_b[..len]);
+        path_bytes
     }
 
     pub fn new(
@@ -30,24 +41,24 @@ impl SendObject {
         path: &str,
         small_counter: u8,
         add_sound_on_small_beat: bool,
+        remove_sound_on_small_beat: bool,
+        remove_sound_path: &str,
     ) -> Self {
-        let mut path_bytes = [0u8; 256];
-
-        let bytes = path.as_bytes();
-
-        let len = std::cmp::min(bytes.len(), 256);
-
-        path_bytes[..len].copy_from_slice(&bytes[..len]);
+        let selected_sound_path = Self::convert_string_byte(path);
+        let remove_sound_path = Self::convert_string_byte(remove_sound_path);
 
         Self {
             sequence,
             increase_bpm: increase,
             decrease_bpm: decrease,
             become_master: master,
-            _padding: [0; 3],
+            _padding_1: [0; 3],
             small_counter,
             add_sound_on_small_beat,
-            selected_sound_path: path_bytes,
+            selected_sound_path,
+            remove_sound_on_small_beat,
+            _padding_2: [0; 7],
+            remove_sound_path,
         }
     }
 }
@@ -136,7 +147,6 @@ impl Memory {
         Self { sender }
     }
 
-
     const FILE_SIZE: u64 = 4096;
 
     fn start_writing_thread(writing_path: String) -> Sender<SendObject> {
@@ -187,6 +197,20 @@ impl Memory {
                             let path_dest_ptr = ptr.add(16);
                             let path_src_ptr = data.selected_sound_path.as_ptr();
                             std::ptr::copy_nonoverlapping(path_src_ptr, path_dest_ptr, 256);
+
+                            let remove_sound_on_small_beat_ptr = ptr.add(272) as *mut bool;
+                            std::ptr::write_volatile(
+                                remove_sound_on_small_beat_ptr,
+                                data.remove_sound_on_small_beat,
+                            );
+
+                            let remove_sound_path_dest_ptr = ptr.add(280);
+                            let remove_sound_path_ptr_ptr = data.remove_sound_path.as_ptr();
+                            std::ptr::copy_nonoverlapping(
+                                remove_sound_path_ptr_ptr,
+                                remove_sound_path_dest_ptr,
+                                256,
+                            );
 
                             let seq_ptr = ptr as *mut u64;
                             std::ptr::write_volatile(seq_ptr, sequence);

@@ -5,6 +5,7 @@ import com.FerdiStro.memory.bus.MemoryUpdateListener;
 import com.FerdiStro.memory.objects.ReceivedData;
 import com.FerdiStro.memory.objects.TransferObject;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,6 +33,8 @@ public class SharedMemoryProvider {
     private long fromEngienCounter = 0;
     @Getter
     private ReceivedData lastData;
+    @Setter
+    private Boolean stopReading = true;
 
     private SharedMemoryProvider() {
 
@@ -56,8 +59,11 @@ public class SharedMemoryProvider {
     }
 
     public void start() {
+        startWriting();
+        startReaderThread();
+    }
 
-        // Writing part
+    private void startWriting() {
         File fromEngienFile = new File(FROM_ENGIEN_SHM);
         try {
 
@@ -80,44 +86,53 @@ public class SharedMemoryProvider {
             e.printStackTrace();
             close();
         }
+    }
 
-        //Reading part
-        HighPerfReader reader = new HighPerfReader(TO_ENGIEN_SHM, FILE_LENGTH, data -> {
-            this.lastData = data;
-            log.debug(data);
-
-            if (!data.getSelectedSoundPath().isBlank()) {
-                if (data.isAddSoundOnSmallBeat()) {
-                    notifyMemoryUpdateListeners(MemoryUpdateCommand.ADD_BEAT_SMALL);
-                }
-
-                return;
-            }
-
-            if (data.isBecomeMaster()) {
-                notifyMemoryUpdateListeners(MemoryUpdateCommand.BECOME_MASTER);
-                return;
-            }
-
-            if (data.isIncreaseBpm()) {
-                notifyMemoryUpdateListeners(MemoryUpdateCommand.INCREASE_BPM);
-                return;
-            }
-
-            if (data.isDecreaseBpm()) {
-                notifyMemoryUpdateListeners(MemoryUpdateCommand.DECREASE_BPM);
-                return;
-            }
-
-            notifyMemoryUpdateListeners(MemoryUpdateCommand.DEFAULT);
-
-        });
+    private void startReaderThread() {
+        HighPerfReader reader = new HighPerfReader(TO_ENGIEN_SHM, FILE_LENGTH, this::updateHandler);
         readerThread = new Thread(reader);
         readerThread.setPriority(Thread.MAX_PRIORITY);
         readerThread.setName("SHMR");
         readerThread.start();
+    }
 
+    private void updateHandler(ReceivedData data) {
+        if (Boolean.TRUE.equals(stopReading)) return;
 
+        //reading is active:
+        log.debug(data);
+        this.lastData = data;
+
+        if (data.isRemoveSoundOnSmallBeat()) {
+            if (!data.getRemoveSoundPath().isBlank()) {
+                notifyMemoryUpdateListeners(MemoryUpdateCommand.REMOVE_BEAT_SMALL);
+            }
+            return;
+        }
+
+        if (data.isAddSoundOnSmallBeat()) {
+            if (!data.getSelectedSoundPath().isBlank()) {
+                notifyMemoryUpdateListeners(MemoryUpdateCommand.ADD_BEAT_SMALL);
+            }
+            return;
+        }
+
+        if (data.isBecomeMaster()) {
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.BECOME_MASTER);
+            return;
+        }
+
+        if (data.isIncreaseBpm()) {
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.INCREASE_BPM);
+            return;
+        }
+
+        if (data.isDecreaseBpm()) {
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.DECREASE_BPM);
+            return;
+        }
+
+        notifyMemoryUpdateListeners(MemoryUpdateCommand.DEFAULT);
     }
 
 
@@ -140,6 +155,4 @@ public class SharedMemoryProvider {
             log.error("Error closing shared memory", e);
         }
     }
-
-
 }

@@ -37,7 +37,6 @@ public class DrumMachine {
     private final Map<DrumCommand, CallBack> drumSounds = new HashMap<>();
 
     public DrumMachine(AbstractMode mode) {
-        mode.setDrumMachineCommandLine(this);
         SharedMemoryProvider.getInstance().addMemoryUpdateListeners(mode);
 
         this.mode = mode;
@@ -81,15 +80,22 @@ public class DrumMachine {
 
     private void drumCommands() {
         drumSounds.put(DrumCommand.ADD_SOUND, drumCommandObject -> {
-            log.info("Command {}", drumCommandObject.toString());
             Beat beat = getValidBeat(drumCommandObject.getBeatPosition());
+            assert beat != null;
             beat.addSample(drumCommandObject.getFileName());
+            updateValidBeat(drumCommandObject.getBeatPosition(), beat);
+        });
+        drumSounds.put(DrumCommand.REMOVE_SOUND, drumCommandObject -> {
+            Beat beat = getValidBeat(drumCommandObject.getBeatPosition());
+            assert beat != null;
+            beat.removeSample(drumCommandObject.getFileName());
             updateValidBeat(drumCommandObject.getBeatPosition(), beat);
         });
     }
 
 
     public void onCommand(DrumCommandObject drumCommandObject) {
+        log.info("Command {}", drumCommandObject.toString());
         this.drumSounds.get(drumCommandObject.getCommand()).onCallBack(drumCommandObject);
     }
 
