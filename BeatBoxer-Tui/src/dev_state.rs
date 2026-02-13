@@ -13,6 +13,7 @@ use std::{env, fs, io};
 pub enum DevStatus {
     App,
     Dev,
+    DevSel,
     Sel,
 }
 
@@ -28,12 +29,20 @@ impl DevState {
         "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/toEngien_shm.bin";
     const FILE_PATH_READING_PROD: &str =
         "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/fromEngien_shm.bin";
+
+    const FILE_PATH_WRITING_DEV: &str =
+        "/Users/maintenance/Projects/CDJ-BeatBoxer/toEngien_shm.bin";
+    const FILE_PATH_READING_DEV: &str =
+        "/Users/maintenance/Projects/CDJ-BeatBoxer/fromEngien_shm.bin";
+
     const SOUND_LIB_FOLDER_PROD: &str = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Sounds";
     const SOUND_LIB_FOLDER_DEV: &str = "/Users/maintenance/Projects/CDJ-BeatBoxer/BeatBoxer-Sounds";
+
+
     const FILE_IGNORE_WRITING: &str = "ui_states/ignore_writing.bin";
 
     fn get_paths() -> Vec<&'static str> {
-        vec!["PROD", "ui_states/set_Beat_first_state.bin", "EXIT"]
+        vec!["PROD", "ui_states/set_Beat_first_state.bin", "DEV_SEL", "EXIT"]
     }
 
     pub fn new() -> Self {
@@ -52,8 +61,10 @@ impl DevState {
 
         let mut path: String = "".to_string();
 
-        let status: DevStatus = if is_env_app && is_env_select_always {
+        let status: DevStatus = if is_env_app && !is_env_select_always {
             DevStatus::App
+        } else if is_env_app && is_env_select_always {
+            DevStatus::DevSel
         } else if is_env_select_always {
             DevStatus::Sel
         } else if !is_env_app && !is_env_select_always {
@@ -126,6 +137,7 @@ impl DevState {
 
     pub fn run_selection_window(&mut self) -> Result<DevStatus> {
         match self.status {
+            DevStatus::DevSel => Ok(DevStatus::DevSel),
             DevStatus::Dev => Ok(DevStatus::Dev),
             DevStatus::App => Ok(DevStatus::App),
             DevStatus::Sel => {
@@ -137,6 +149,26 @@ impl DevState {
 
                 match result {
                     Ok(Some(selection)) => {
+                        if selection.eq("DEV_SEL") {
+                            unsafe {
+                                self.update_env_file("BEATBOXER_ENV_APP", "true")?;
+                                self.update_env_file("BEATBOXER_ENV_SELECT_ALWAYS", "true")?;
+                                self.update_env_file(
+                                    "BEATBOXER_READ_PATH",
+                                    &DevState::FILE_PATH_READING_DEV,
+                                )?;
+                                self.update_env_file(
+                                    "BEATBOXER_WRITE_PATH",
+                                    DevState::FILE_PATH_WRITING_DEV,
+                                )?;
+                                self.update_env_file(
+                                    "BEATBOXER_FILE_EXPLORER_PATH",
+                                    DevState::SOUND_LIB_FOLDER_DEV,
+                                )?;
+                            }
+                            return Ok(DevStatus::DevSel);
+                        }
+
                         if selection.eq("PROD") {
                             unsafe {
                                 self.update_env_file("BEATBOXER_ENV_APP", "true")?;

@@ -18,6 +18,13 @@ public abstract class AbstractMode implements MemoryUpdateListener {
 
     protected static final Logger log = LogManager.getLogger();
     protected SharedMemoryProvider memoryProvider;
+    /**
+     * Beat grid is displayed by a long max 64 Bit long. Position can only increase, after 64. place it will be reset to the first postion.
+     * Ideal for presenting 64 beats long Sound grid.
+     * SmallCount just 4 Bits big counting.
+     * Only Increasing position
+     */
+    int syncBarPosition = 1;
     @Getter
     private boolean smallBeat = true;
     @Setter
@@ -43,18 +50,24 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     public void onMemoryUpdateImpl(MemoryUpdateCommand command) {
     }
 
-    /**
-     * Beat grid is displayed by a long max 64 Bit long. Position can only increase, after 64. place it will be reset to the first postion.
-     * Ideal for presenting 64 beats long Sound grid.
-     * SmallCount just 4 Bits big counting.
-     * Only Increasing position
-     */
-    private void movePosition() {
-        totalCounter <<= 1;
-        if (totalCounter == 0) {
-            totalCounter = 1L;
+    private Boolean movePosition(int barPosition) {
+        boolean sync = false;
+        if (barPosition == syncBarPosition) {
+            totalCounter <<= 1;
+            if (totalCounter == 0) {
+                totalCounter = 1L;
+            }
+            smallCounter = (byte) ((smallCounter + 1) & 7);
+
+            syncBarPosition += 1;
+
+            if (syncBarPosition == 5) {
+                syncBarPosition = 1;
+            }
+            sync = true;
         }
-        smallCounter = (byte) ((smallCounter + 1) & 3);
+
+        return sync;
     }
 
     public void init() {
@@ -73,7 +86,9 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     }
 
     public void onBeat(int barPosition) {
-        this.smallCounter = (byte) (barPosition - 1);
+        if (Boolean.FALSE.equals(movePosition(barPosition))) {
+            return;
+        }
         this.drumMachineCommandLine.onBeat(this.smallCounter);
         this.sendMemoryUpdate();
     }

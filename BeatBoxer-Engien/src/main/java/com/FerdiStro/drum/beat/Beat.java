@@ -49,6 +49,12 @@ public class Beat {
                 samplersNames[i] = filePath;
                 added = true;
                 break;
+            } else {
+                if (filePath.equals(samplersNames[i])) {
+                    log.warn("Sound already on beat");
+                    added = true;
+                    break;
+                }
             }
         }
         if (!added) {

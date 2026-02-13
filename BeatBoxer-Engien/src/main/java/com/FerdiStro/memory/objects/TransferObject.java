@@ -38,7 +38,7 @@ public class TransferObject {
     private final TransferBeatData[] transferBeatData;
 
     public TransferObject(double bpm, byte smallCounter, long totalCounter, boolean master, Beat[] beats) {
-        byte maxSize = 0b100;
+        byte maxSize = 0b1000;
         if (smallCounter > maxSize) {
             throw new ByteSizeValidationException("Small-Counter", maxSize, smallCounter);
         }

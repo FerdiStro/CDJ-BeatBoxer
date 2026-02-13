@@ -31,7 +31,7 @@ pub fn render_header_section(frame: &mut Frame, area: Rect, app: &App) {
 
     let areas = [count_0, count_1, count_2, count_3];
     for (i, area) in areas.into_iter().enumerate() {
-        let is_active = i == (app.small_counter as usize);
+        let is_active = i == app.small_counter as usize;
         let (symbol, color) = if is_active {
             ("⬤", Color::Red)
         } else {

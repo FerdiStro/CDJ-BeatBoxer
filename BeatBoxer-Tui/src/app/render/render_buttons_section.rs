@@ -23,17 +23,17 @@ fn render_pad_row(frame: &mut Frame, area: Rect, app: &App) {
         .constraints([Constraint::Ratio(1, 8); 8])
         .split(area);
 
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_1, app, frame, chunks[0]);
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_2, app, frame, chunks[1]);
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_3, app, frame, chunks[2]);
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_4, app, frame, chunks[3]);
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_5, app, frame, chunks[4]);
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_6, app, frame, chunks[5]);
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_7, app, frame, chunks[6]);
-    SecondControlButton::render_bar_button(SecondControlButton::BAR_8, app, frame, chunks[7]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar1, app, frame, chunks[0]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar2, app, frame, chunks[1]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar3, app, frame, chunks[2]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar4, app, frame, chunks[3]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar5, app, frame, chunks[4]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar6, app, frame, chunks[5]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar7, app, frame, chunks[6]);
+    SecondControlButton::render_bar_button(SecondControlButton::Bar8, app, frame, chunks[7]);
 }
 
-fn render_number_row(frame: &mut Frame, area: Rect, app: &App) {
+fn render_number_row(frame: &mut Frame, area: Rect, _app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Ratio(1, 8); 8])

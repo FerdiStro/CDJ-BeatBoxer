@@ -1,10 +1,11 @@
 use crate::app::app::{App, AppAction};
-use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
+use crate::app::buttons::{ FirstControlButton, SecondControlButton};
 use crate::app::render::render_buttons_section::render_buttons_section;
 use crate::app::render::render_header_section::render_header_section;
 use crate::app::render::render_manage_section::render_manage_section;
 use crate::app::render::render_render_section::render_render_section;
 use crate::app::render::render_utils_section::render_utils_section;
+use color_eyre::Report;
 use crossterm::event;
 use crossterm::event::{Event, KeyEventKind};
 use ratatui::layout::Constraint::{Fill, Length, Ratio};
@@ -15,39 +16,107 @@ use std::time::Duration;
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Render {}
 impl Render {
-    pub fn run(mut app: App) -> color_eyre::Result<()> {
-        let mut terminal = ratatui::init();
-        loop {
-            terminal.draw(|f| render(f, &mut app))?;
+    fn key_inputs(_app: &mut App, actions: [AppAction; 2]) -> color_eyre::Result<()> {
+        let [action, state] = actions;
+        match action {
+            AppAction::Quit => Err(Report::msg("Application quited")),
+            AppAction::Bar1 => {
+                SecondControlButton::Bar1.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::Bar2 => {
+                SecondControlButton::Bar2.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::Bar3 => {
+                SecondControlButton::Bar3.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::Bar4 => {
+                SecondControlButton::Bar4.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::Bar5 => {
+                SecondControlButton::Bar5.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::Bar6 => {
+                SecondControlButton::Bar6.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::Bar7 => {
+                SecondControlButton::Bar7.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::Bar8 => {
+                SecondControlButton::Bar8.add_bar_submit(&_app.selected_sound, &_app.memory);
+                Ok(())
+            }
+            AppAction::NextMode => {
+                _app.next_mode(state);
+                Ok(())
+            }
+            AppAction::PreviousMode => {
+                _app.previous_mode(state);
+                Ok(())
+            }
+            AppAction::Submit => {
+                _app.submit(state);
+                Ok(())
+            }
+            AppAction::Backspace => match _app.first_control_mode {
+                FirstControlButton::FileBrowser => {
+                    if let Some(parent) = _app.file_explorer.current_dir.parent() {
+                        _app.file_explorer.current_dir = parent.to_path_buf();
+                        _app.file_explorer.read_dir();
+                    }
+                    Ok(())
+                }
+                _ => Ok(()),
+            },
+            _ => Ok(()),
+        }
+    }
 
+    pub fn run(mut _app: App) -> color_eyre::Result<()> {
+        let mut terminal = ratatui::init();
+        _app.key_board_interactions.init_midi();
+
+        loop {
+            terminal.draw(|f| render(f, &mut _app))?;
+
+            let mut pending_midi_messages = Vec::new();
+
+            //Midi
+            if let Some(rx) = &_app.key_board_interactions.midi_receiver {
+                for message in rx.try_iter() {
+                    pending_midi_messages.push(message);
+                }
+            }
+            for message in pending_midi_messages {
+                let app_actions = _app.key_board_interactions.on_midi_code(&message);
+
+                match Self::key_inputs(&mut _app, app_actions) {
+                    Err(_e) => break,
+                    _ => {}
+                }
+            }
+
+            //Keyboard
             if event::poll(Duration::from_millis(50))? {
                 if let Event::Key(key) = event::read()? {
                     if key.kind == KeyEventKind::Press {
-                        let [action, state] = app.key_board_interactions.on_key_code(key.code);
+                        let app_actions = _app.key_board_interactions.on_key_code(key.code);
 
-                        match action {
-                            AppAction::Quit => break Ok(()),
-                            AppAction::BAR_1 => SecondControlButton::BAR_1
-                                .add_bar_submit(&app.selected_sound, &app.memory),
-                            AppAction::NextMode => app.next_mode(state),
-                            AppAction::PreviousMode => app.previous_mode(state),
-                            AppAction::Submit => app.submit(state),
-                            AppAction::Backspace => match app.first_control_mode {
-                                FirstControlButton::FileBrowser => {
-                                    if let Some(parent) = app.file_explorer.current_dir.parent() {
-                                        app.file_explorer.current_dir = parent.to_path_buf();
-                                        app.file_explorer.read_dir();
-                                    }
-                                }
-                                _ => {}
-                            },
+                        match Self::key_inputs(&mut _app, app_actions) {
+                            Err(_e) => break Ok(()),
                             _ => {}
                         }
                     }
                 }
             }
 
-            app.update()
+            _app.update()
         }
     }
 

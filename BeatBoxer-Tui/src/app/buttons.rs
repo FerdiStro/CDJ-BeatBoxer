@@ -1,7 +1,6 @@
 use crate::app::app::{App, SoundBar};
 use crate::app::memory::memory::{Memory, SendObject};
 use crate::app::render::render::Render;
-use color_eyre::owo_colors::OwoColorize;
 use ratatui::layout::Rect;
 use ratatui::prelude::{Color, Style};
 use ratatui::widgets::{Block, Paragraph};
@@ -57,14 +56,14 @@ pub enum SecondControlButton {
     BarLock,
     PreviousBar,
     NextBar,
-    BAR_1,
-    BAR_2,
-    BAR_3,
-    BAR_4,
-    BAR_5,
-    BAR_6,
-    BAR_7,
-    BAR_8,
+    Bar1,
+    Bar2,
+    Bar3,
+    Bar4,
+    Bar5,
+    Bar6,
+    Bar7,
+    Bar8,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -100,7 +99,7 @@ impl Button for FirstControlButton {
         }
     }
 
-    fn next(&self, exclude: &[&FirstControlButton]) -> Self {
+    fn next(&self, _exclude: &[&FirstControlButton]) -> Self {
         match self {
             FirstControlButton::Settings => FirstControlButton::DecreaseBpm,
             FirstControlButton::DecreaseBpm => FirstControlButton::IncreaseBpm,
@@ -110,7 +109,7 @@ impl Button for FirstControlButton {
         }
     }
 
-    fn previous(&self, exclude: &[&FirstControlButton]) -> Self {
+    fn previous(&self, _exclude: &[&FirstControlButton]) -> Self {
         match self {
             FirstControlButton::Settings => FirstControlButton::FileBrowser,
             FirstControlButton::BecomeMaster => FirstControlButton::IncreaseBpm,
@@ -140,14 +139,14 @@ impl Button for SecondControlButton {
             SecondControlButton::BarLock => "Lock",
             SecondControlButton::PreviousBar => "<-",
             SecondControlButton::NextBar => "->",
-            SecondControlButton::BAR_1 => "0",
-            SecondControlButton::BAR_2 => "1",
-            SecondControlButton::BAR_3 => "2",
-            SecondControlButton::BAR_4 => "3",
-            SecondControlButton::BAR_5 => "4",
-            SecondControlButton::BAR_6 => "5",
-            SecondControlButton::BAR_7 => "6",
-            SecondControlButton::BAR_8 => "7",
+            SecondControlButton::Bar1 => "0",
+            SecondControlButton::Bar2 => "1",
+            SecondControlButton::Bar3 => "2",
+            SecondControlButton::Bar4 => "3",
+            SecondControlButton::Bar5 => "4",
+            SecondControlButton::Bar6 => "5",
+            SecondControlButton::Bar7 => "6",
+            SecondControlButton::Bar8 => "7",
         }
     }
 
@@ -171,15 +170,15 @@ impl Button for SecondControlButton {
             candidate = match candidate {
                 SecondControlButton::BarLock => SecondControlButton::PreviousBar,
                 SecondControlButton::PreviousBar => SecondControlButton::NextBar,
-                SecondControlButton::NextBar => SecondControlButton::BAR_1,
-                SecondControlButton::BAR_1 => SecondControlButton::BAR_2,
-                SecondControlButton::BAR_2 => SecondControlButton::BAR_3,
-                SecondControlButton::BAR_3 => SecondControlButton::BAR_4,
-                SecondControlButton::BAR_4 => SecondControlButton::BAR_5,
-                SecondControlButton::BAR_5 => SecondControlButton::BAR_6,
-                SecondControlButton::BAR_6 => SecondControlButton::BAR_7,
-                SecondControlButton::BAR_7 => SecondControlButton::BAR_8,
-                SecondControlButton::BAR_8 => SecondControlButton::BarLock,
+                SecondControlButton::NextBar => SecondControlButton::Bar1,
+                SecondControlButton::Bar1 => SecondControlButton::Bar2,
+                SecondControlButton::Bar2 => SecondControlButton::Bar3,
+                SecondControlButton::Bar3 => SecondControlButton::Bar4,
+                SecondControlButton::Bar4 => SecondControlButton::Bar5,
+                SecondControlButton::Bar5 => SecondControlButton::Bar6,
+                SecondControlButton::Bar6 => SecondControlButton::Bar7,
+                SecondControlButton::Bar7 => SecondControlButton::Bar8,
+                SecondControlButton::Bar8 => SecondControlButton::BarLock,
             };
             if !exclude.contains(&&candidate) {
                 return candidate;
@@ -194,17 +193,17 @@ impl Button for SecondControlButton {
         let mut candidate = *self;
         loop {
             candidate = match candidate {
-                SecondControlButton::BarLock => SecondControlButton::BAR_8,
+                SecondControlButton::BarLock => SecondControlButton::Bar8,
                 SecondControlButton::PreviousBar => SecondControlButton::BarLock,
                 SecondControlButton::NextBar => SecondControlButton::PreviousBar,
-                SecondControlButton::BAR_1 => SecondControlButton::NextBar,
-                SecondControlButton::BAR_2 => SecondControlButton::BAR_1,
-                SecondControlButton::BAR_3 => SecondControlButton::BAR_2,
-                SecondControlButton::BAR_4 => SecondControlButton::BAR_3,
-                SecondControlButton::BAR_5 => SecondControlButton::BAR_4,
-                SecondControlButton::BAR_6 => SecondControlButton::BAR_5,
-                SecondControlButton::BAR_7 => SecondControlButton::BAR_6,
-                SecondControlButton::BAR_8 => SecondControlButton::BAR_7,
+                SecondControlButton::Bar1 => SecondControlButton::NextBar,
+                SecondControlButton::Bar2 => SecondControlButton::Bar1,
+                SecondControlButton::Bar3 => SecondControlButton::Bar2,
+                SecondControlButton::Bar4 => SecondControlButton::Bar3,
+                SecondControlButton::Bar5 => SecondControlButton::Bar4,
+                SecondControlButton::Bar6 => SecondControlButton::Bar5,
+                SecondControlButton::Bar7 => SecondControlButton::Bar6,
+                SecondControlButton::Bar8 => SecondControlButton::Bar7,
             };
             if !exclude.contains(&&candidate) {
                 return candidate;
@@ -215,7 +214,7 @@ impl Button for SecondControlButton {
         }
     }
 
-    fn submit(&self, memory: &Memory) {}
+    fn submit(&self, _memory: &Memory) {}
 }
 
 impl SecondControlButton {
@@ -269,7 +268,7 @@ impl SecondControlButton {
         let style = if app.bar_counter == bar_index {
             Style::default().bg(Color::Red)
         } else {
-            Style::default().fg(Color::Gray)
+            Style::default().fg(Color::White)
         };
 
         let select_test = if app.second_control_mode.label() == self.label()

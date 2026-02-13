@@ -1,7 +1,7 @@
 use crate::app::app::App;
 use crate::app::buttons::{Button, FirstControlButton};
 use crate::app::render::render::Render;
-use crate::app::FileExplorer::FileExplorer;
+use crate::app::file_explorer::FileExplorer;
 use ratatui::layout::Constraint::Ratio;
 use ratatui::layout::{Direction, Layout, Rect};
 use ratatui::style::{Color, Style};

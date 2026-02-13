@@ -34,9 +34,9 @@ public class Main {
 
         NetWorkInfo netWorkInfo = NetWorkInfo.getInstance();
 
-        if (!netWorkInfo.status()) {
-            throw new NetworkNotFoundException();
-        }
+//        if (!netWorkInfo.status()) {
+//            throw new NetworkNotFoundException();
+//        }
 
         Finder finder = Finder.getInstance(MAX_ATTEMPTS);
         Set<DeviceAnnouncement> deviceAnnouncements = finder.getDeviceAnnouncements();

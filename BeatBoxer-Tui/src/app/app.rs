@@ -1,12 +1,11 @@
 use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
+use crate::app::file_explorer::FileExplorer;
+use crate::app::interactions::keyboard_interactions::{KeyBoardInteractions, MidiColor};
 use crate::app::memory::memory::{Memory, ReceiveObject, SoundEntry};
+use crate::app::render::render::Render;
+use color_eyre::Result;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
-
-use crate::app::interactions::keyboard_interactions::KeyBoardInteractions;
-use crate::app::render::render::Render;
-use crate::app::FileExplorer::FileExplorer;
-use color_eyre::Result;
 
 pub enum AppAction {
     Quit,
@@ -18,7 +17,14 @@ pub enum AppAction {
     FileMode,
     None,
     Backspace,
-    BAR_1,
+    Bar1,
+    Bar2,
+    Bar3,
+    Bar4,
+    Bar5,
+    Bar6,
+    Bar7,
+    Bar8,
 }
 
 pub struct SoundBar {
@@ -109,14 +115,23 @@ impl App {
                 self.bar_counter
             };
 
+            
             self.bpm = guard.bpm;
             self.small_counter = guard.small_counter;
             self.total_counter = guard.total_counter;
             self.is_master = guard.is_master;
 
             for i in 0..8 {
+                let sound_bar = SoundBar::new(i, &guard.sounds);
+                if sound_bar.size != 0 {
+                    self.key_board_interactions
+                        .update_midi_pad_color(i as u8, MidiColor::Stay);
+                }
                 self.beat_sequence[i] = SoundBar::new(i, &guard.sounds);
             }
+            self.key_board_interactions
+                .update_with_send_midi_pad_color(self.bar_counter, MidiColor::Cyan);
+
             self.debug_message = guard.sounds[0].get_path_string()
                 + "Bit Mask: "
                 + &guard.sounds[0].assigned_slot.to_string()
@@ -152,6 +167,15 @@ impl App {
         })
     }
 
+    fn check_bar_next(&mut self, bar_button: SecondControlButton) {
+        let i: u8 = bar_button.label().parse().expect("ERROR. No bar selected");
+        if self.beat_sequence[i as usize].size > self.key_help_counter {
+            self.key_help_counter += 1
+        } else {
+            self.key_help_counter = 0
+        }
+    }
+
     pub fn next_mode(&mut self, state: AppAction) {
         match state {
             AppAction::FirstMode => match self.first_control_mode {
@@ -165,19 +189,22 @@ impl App {
             },
             AppAction::SecondMode => {
                 match self.second_control_mode {
-                    //implement all other BAR_n
-                    SecondControlButton::BAR_1 => {
-                        if self.beat_sequence[0].size > self.key_help_counter {
-                            self.key_help_counter += 1;
-                            return;
-                        } else {
-                            self.key_help_counter = 0
-                        }
-                    }
+                    SecondControlButton::Bar1 => self.check_bar_next(SecondControlButton::Bar1),
+                    SecondControlButton::Bar2 => self.check_bar_next(SecondControlButton::Bar2),
+                    SecondControlButton::Bar3 => self.check_bar_next(SecondControlButton::Bar3),
+                    SecondControlButton::Bar4 => self.check_bar_next(SecondControlButton::Bar4),
+                    SecondControlButton::Bar5 => self.check_bar_next(SecondControlButton::Bar5),
+                    SecondControlButton::Bar6 => self.check_bar_next(SecondControlButton::Bar6),
+                    SecondControlButton::Bar7 => self.check_bar_next(SecondControlButton::Bar7),
+                    SecondControlButton::Bar8 => self.check_bar_next(SecondControlButton::Bar8),
                     _ => self.key_help_counter = 0,
                 }
 
-                if (self.is_lock) {
+                if self.key_help_counter != 0 {
+                    return;
+                }
+
+                if self.is_lock {
                     self.second_control_mode = self.second_control_mode.next(&[
                         &SecondControlButton::PreviousBar,
                         &SecondControlButton::NextBar,
@@ -194,7 +221,7 @@ impl App {
         match state {
             AppAction::FirstMode => match self.first_control_mode {
                 FirstControlButton::FileBrowser => {
-                    if (self.file_explorer.is_start()) {
+                    if self.file_explorer.is_start() {
                         self.first_control_mode = self.first_control_mode.previous(&[])
                     } else {
                         self.file_explorer.previous();
@@ -203,7 +230,7 @@ impl App {
                 _ => self.first_control_mode = self.first_control_mode.previous(&[]),
             },
             AppAction::SecondMode => {
-                if (self.is_lock) {
+                if self.is_lock {
                     self.second_control_mode = self.second_control_mode.previous(&[
                         &SecondControlButton::PreviousBar,
                         &SecondControlButton::NextBar,
@@ -238,42 +265,42 @@ impl App {
                 _ => FirstControlButton::submit(&self.first_control_mode, &self.memory),
             },
             AppAction::SecondMode => match self.second_control_mode {
-                SecondControlButton::BAR_1 => SecondControlButton::BAR_1.remove_bar_submit(
+                SecondControlButton::Bar1 => SecondControlButton::Bar1.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
                 ),
-                SecondControlButton::BAR_2 => SecondControlButton::BAR_2.remove_bar_submit(
+                SecondControlButton::Bar2 => SecondControlButton::Bar2.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
                 ),
-                SecondControlButton::BAR_3 => SecondControlButton::BAR_3.remove_bar_submit(
+                SecondControlButton::Bar3 => SecondControlButton::Bar3.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
                 ),
-                SecondControlButton::BAR_4 => SecondControlButton::BAR_4.remove_bar_submit(
+                SecondControlButton::Bar4 => SecondControlButton::Bar4.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
                 ),
-                SecondControlButton::BAR_5 => SecondControlButton::BAR_5.remove_bar_submit(
+                SecondControlButton::Bar5 => SecondControlButton::Bar5.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
                 ),
-                SecondControlButton::BAR_6 => SecondControlButton::BAR_6.remove_bar_submit(
+                SecondControlButton::Bar6 => SecondControlButton::Bar6.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
                 ),
-                SecondControlButton::BAR_7 => SecondControlButton::BAR_7.remove_bar_submit(
+                SecondControlButton::Bar7 => SecondControlButton::Bar7.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
                 ),
-                SecondControlButton::BAR_8 => SecondControlButton::BAR_8.remove_bar_submit(
+                SecondControlButton::Bar8 => SecondControlButton::Bar8.remove_bar_submit(
                     self.key_help_counter,
                     &self.beat_sequence,
                     &self.memory,
