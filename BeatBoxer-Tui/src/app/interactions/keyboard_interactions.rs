@@ -157,11 +157,7 @@ impl KeyBoardInteractions {
     fn map_message_to_key_code(&mut self, message: &[u8]) -> KeyCode {
         match message[1] {
             //smallest c not to shift mode
-            48 => {
-                let shift_mode = !(self.midi_key_values[&1] != 0) as u8;
-                self.midi_key_values.insert(1, shift_mode);
-                KeyCode::Null
-            }
+            48 => KeyCode::Tab,
             36 => KeyCode::Char('1'),
             37 => KeyCode::Char('2'),
             38 => KeyCode::Char('3'),
@@ -222,6 +218,13 @@ impl KeyBoardInteractions {
     pub fn on_key_code(&mut self, code: KeyCode) -> [AppAction; 2] {
         [
             match code {
+                //Yab works as shift. Equal to midi first c node
+                KeyCode::Tab => {
+                    let shift_mode = !(self.midi_key_values[&1] != 0) as u8;
+                    self.midi_key_values.insert(1, shift_mode);
+                    AppAction::Shift
+                }
+
                 KeyCode::Char('q') => AppAction::Quit,
                 KeyCode::Char('1') => AppAction::Bar1,
                 KeyCode::Char('2') => AppAction::Bar2,

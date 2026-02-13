@@ -17,6 +17,7 @@ pub enum AppAction {
     FileMode,
     None,
     Backspace,
+    Shift,
     Bar1,
     Bar2,
     Bar3,
@@ -86,6 +87,7 @@ pub struct App {
     shared_state: Arc<Mutex<ReceiveObject>>,
     pub memory: Memory,
     //Keyboard/MIDI
+    pub shift_mode: bool,
     pub first_control_mode: FirstControlButton,
     pub second_control_mode: SecondControlButton,
     pub key_board_interactions: KeyBoardInteractions,
@@ -115,7 +117,6 @@ impl App {
                 self.bar_counter
             };
 
-            
             self.bpm = guard.bpm;
             self.small_counter = guard.small_counter;
             self.total_counter = guard.total_counter;
@@ -126,6 +127,9 @@ impl App {
                 if sound_bar.size != 0 {
                     self.key_board_interactions
                         .update_midi_pad_color(i as u8, MidiColor::Stay);
+                } else {
+                    self.key_board_interactions
+                        .update_midi_pad_color(i as u8, MidiColor::Black);
                 }
                 self.beat_sequence[i] = SoundBar::new(i, &guard.sounds);
             }
@@ -160,6 +164,7 @@ impl App {
             memory,
             key_board_interactions: KeyBoardInteractions::new(),
             key_help_counter: 0,
+            shift_mode: false,
             file_explorer: FileExplorer::new(),
             selected_sound: PathBuf::default(),
             beat_sequence: std::array::from_fn(|_| SoundBar::default()),

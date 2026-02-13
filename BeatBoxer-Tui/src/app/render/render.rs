@@ -1,5 +1,5 @@
 use crate::app::app::{App, AppAction};
-use crate::app::buttons::{ FirstControlButton, SecondControlButton};
+use crate::app::buttons::{FirstControlButton, SecondControlButton};
 use crate::app::render::render_buttons_section::render_buttons_section;
 use crate::app::render::render_header_section::render_header_section;
 use crate::app::render::render_manage_section::render_manage_section;
@@ -20,36 +20,81 @@ impl Render {
         let [action, state] = actions;
         match action {
             AppAction::Quit => Err(Report::msg("Application quited")),
+
+            AppAction::Shift => {
+                _app.shift_mode = !_app.shift_mode;
+                Ok(())
+            }
             AppAction::Bar1 => {
-                SecondControlButton::Bar1.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar1.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::Bar2 => {
-                SecondControlButton::Bar2.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar2.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::Bar3 => {
-                SecondControlButton::Bar3.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar3.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::Bar4 => {
-                SecondControlButton::Bar4.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar4.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::Bar5 => {
-                SecondControlButton::Bar5.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar5.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::Bar6 => {
-                SecondControlButton::Bar6.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar6.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::Bar7 => {
-                SecondControlButton::Bar7.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar7.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::Bar8 => {
-                SecondControlButton::Bar8.add_bar_submit(&_app.selected_sound, &_app.memory);
+                SecondControlButton::Bar8.on_bar_press(
+                    &_app.selected_sound,
+                    &_app.memory,
+                    &_app.shift_mode,
+                    &_app.beat_sequence,
+                );
                 Ok(())
             }
             AppAction::NextMode => {

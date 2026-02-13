@@ -218,7 +218,32 @@ impl Button for SecondControlButton {
 }
 
 impl SecondControlButton {
-    pub fn add_bar_submit(self, selected_sound_path: &PathBuf, memory: &Memory) {
+    pub fn on_bar_press(
+        &self,
+        selected_sound_path: &PathBuf,
+        memory: &Memory,
+        shift_mode: &bool,
+        beat_sequence: &[SoundBar; 8],
+    ) {
+        if *shift_mode {
+            let i: u8 = self.label().parse().expect("ERROR. No bar selected");
+            let selected_path = selected_sound_path.to_string_lossy();
+            let index_to_remove = beat_sequence.get(i as usize).and_then(|sound_bar| {
+                sound_bar
+                    .paths
+                    .iter()
+                    .position(|path| path == &*selected_path)
+            });
+
+            if let Some(path_idx) = index_to_remove {
+                self.remove_bar_submit((path_idx as u8) + 1, beat_sequence, memory);
+            }
+        } else {
+            self.add_bar_submit(selected_sound_path, memory)
+        }
+    }
+
+    fn add_bar_submit(self, selected_sound_path: &PathBuf, memory: &Memory) {
         let i: u8 = self.label().parse().expect("ERROR. No bar selected");
 
         if selected_sound_path != &PathBuf::default() {
