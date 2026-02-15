@@ -47,9 +47,9 @@ fn render_number_row(frame: &mut Frame, area: Rect, _app: &App) {
 }
 
 fn render_control_buttons(frame: &mut Frame, area: Rect, app: &App) {
-    let [button_1, button_2, button_3] = Layout::default()
+    let [button_1, button_2, button_3, midi_area] = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Length(8), Length(8), Length(8)])
+        .constraints([Length(8), Length(8), Length(8), Fill(0)])
         .areas(area);
 
     let [is_lock_active_color, is_lock_inactive_flag_color] = if app.is_lock {
@@ -80,4 +80,6 @@ fn render_control_buttons(frame: &mut Frame, area: Rect, app: &App) {
         SecondControlButton::NextBar,
         is_lock_inactive_flag_color,
     );
+
+    app.knobs.draw_midi_knobs(frame, midi_area)
 }

@@ -145,6 +145,7 @@ impl Render {
                     Err(_e) => break,
                     _ => {}
                 }
+                _app.knobs.check_midi_knobs(&message, &_app.memory);
             }
 
             //Keyboard

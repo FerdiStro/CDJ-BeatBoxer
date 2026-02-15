@@ -81,3 +81,7 @@ TUI -> Engine<br><br>
 | 272       | 1             | remove_sound_on_small_beat | boolean     | bool        |
 | 273 - 279 | 7             | Padding                    | -           | [u8; 7]     |
 | 280 - 535 | 256           | remove_sound_path          | byte[]      | [u8; 256]   |
+| 536       | 1             | knob_value                 | byte        | u8          |
+| 537       | 1             | knob_echo                  | boolean     | bool        |
+| 538       | 1             | knob_reverb                | boolean     | bool        |
+| 539       | 1             | knob_distortion            | boolean     | bool        |

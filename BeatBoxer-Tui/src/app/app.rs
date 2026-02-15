@@ -1,12 +1,14 @@
 use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
 use crate::app::file_explorer::FileExplorer;
 use crate::app::interactions::keyboard_interactions::{KeyBoardInteractions, MidiColor};
+use crate::app::interactions::knob::Knobs;
 use crate::app::memory::memory::{Memory, ReceiveObject, SoundEntry};
 use crate::app::render::render::Render;
 use color_eyre::Result;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
+#[derive(Debug, Copy, Clone)]
 pub enum AppAction {
     Quit,
     NextMode,
@@ -92,6 +94,7 @@ pub struct App {
     pub second_control_mode: SecondControlButton,
     pub key_board_interactions: KeyBoardInteractions,
     pub key_help_counter: u8,
+    pub knobs: Knobs,
     //File
     pub file_explorer: FileExplorer,
     pub selected_sound: PathBuf,
@@ -164,6 +167,7 @@ impl App {
             memory,
             key_board_interactions: KeyBoardInteractions::new(),
             key_help_counter: 0,
+            knobs: Knobs::new(),
             shift_mode: false,
             file_explorer: FileExplorer::new(),
             selected_sound: PathBuf::default(),

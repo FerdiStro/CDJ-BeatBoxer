@@ -18,11 +18,33 @@ pub struct SendObject {
     pub remove_sound_on_small_beat: bool,
     _padding_2: [u8; 7],
     pub remove_sound_path: [u8; 256],
+    pub knob_value: u8,
+    pub knob_echo: bool,
+    pub knob_reverb: bool,
+    pub knob_distortion: bool,
 }
 
 impl SendObject {
+    pub fn knop_reverb() -> Self {
+        Self::new(
+            0, false, false, false, "", 0, false, false, "", 0, false, true, false,
+        )
+    }
+    pub fn knop_distortion() -> Self {
+        Self::new(
+            0, false, false, false, "", 0, false, false, "", 0, false, false, true,
+        )
+    }
+    pub fn knop_echo() -> Self {
+        Self::new(
+            0, false, false, false, "", 0, false, false, "", 0, true, false, false,
+        )
+    }
+
     pub fn default() -> Self {
-        Self::new(0, false, false, false, "", 0, false, false, "")
+        Self::new(
+            0, false, false, false, "", 0, false, false, "", 0, false, false, false,
+        )
     }
 
     pub fn convert_string_byte(path: &str) -> [u8; 256] {
@@ -43,6 +65,10 @@ impl SendObject {
         add_sound_on_small_beat: bool,
         remove_sound_on_small_beat: bool,
         remove_sound_path: &str,
+        knob_value: u8,
+        knob_echo: bool,
+        knob_reverb: bool,
+        knob_distortion: bool,
     ) -> Self {
         let selected_sound_path = Self::convert_string_byte(path);
         let remove_sound_path = Self::convert_string_byte(remove_sound_path);
@@ -59,6 +85,10 @@ impl SendObject {
             remove_sound_on_small_beat,
             _padding_2: [0; 7],
             remove_sound_path,
+            knob_value,
+            knob_echo,
+            knob_reverb,
+            knob_distortion,
         }
     }
 }
