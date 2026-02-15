@@ -1,5 +1,10 @@
 # CDJ-BeatBoxer
 
+### System dependencies
+
+`sudo apt install libasound2-dev`
+
+<br>
 https://ratatui.rs/
 
 ### Binary-Struct
