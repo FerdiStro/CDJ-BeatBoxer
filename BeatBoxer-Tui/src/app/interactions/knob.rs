@@ -1,4 +1,3 @@
-use crate::app::app::AppAction;
 use crate::app::memory::memory::{Memory, SendObject};
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::prelude::{Color, Style};
@@ -12,36 +11,12 @@ pub struct Knob {
     pub send_object: SendObject,
 }
 impl Knob {
-    pub fn default() -> Self {
-        Self::new("".to_string(), 0, 0, SendObject::default())
-    }
-
     pub fn new(name: String, value: u8, midi_value: u8, send_object: SendObject) -> Self {
         Self {
             name,
             value,
             midi_value,
             send_object,
-        }
-    }
-}
-
-pub struct KnobCommand {
-    pub action: AppAction,
-    pub value: u8,
-}
-impl KnobCommand {
-    pub fn default() -> Self {
-        Self {
-            action: AppAction::None,
-            value: 0,
-        }
-    }
-
-    pub fn new(app_action: AppAction, value: u8) -> Self {
-        Self {
-            action: app_action,
-            value,
         }
     }
 }
@@ -85,8 +60,9 @@ impl Knobs {
 
         for (i, (x, y)) in border_path.iter().enumerate() {
             if i < active_cells {
-                let cell = buf.get_mut(*x, *y);
-                cell.set_fg(Color::Cyan);
+                if let Some(cell) = buf.cell_mut((*x, *y)) {
+                    cell.set_fg(Color::Cyan);
+                }
             }
         }
 

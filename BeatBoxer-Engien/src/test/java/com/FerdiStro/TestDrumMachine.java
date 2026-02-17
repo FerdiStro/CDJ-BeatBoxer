@@ -1,11 +1,9 @@
 package com.FerdiStro;
 
-import com.FerdiStro.cdj.modes.AbstractMode;
-import com.FerdiStro.cdj.modes.OfflineMode;
+import com.FerdiStro.drum.modes.OfflineMode;
 import com.FerdiStro.drum.DrumMachine;
 import com.FerdiStro.drum.command.DrumCommand;
 import com.FerdiStro.drum.command.DrumCommandObject;
-import com.FerdiStro.memory.SharedMemoryProvider;
 import com.FerdiStro.memory.objects.TransferObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

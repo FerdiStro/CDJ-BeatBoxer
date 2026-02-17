@@ -97,7 +97,15 @@ impl KeyBoardInteractions {
         let out_ports = midi_out.ports();
 
         let mut conn_out: Option<MidiOutputConnection> = None;
+
         let mut midi_key_values: HashMap<u8, u8> = HashMap::new();
+        //counter for midi input latency
+        midi_key_values.insert(0, 0);
+        //Shift state  1 true 0 false
+        midi_key_values.insert(1, 0);
+        //navigate knops state
+        midi_key_values.insert(74, 0);
+        midi_key_values.insert(18, 0);
 
         match out_ports.get(0) {
             None => {
@@ -108,14 +116,6 @@ impl KeyBoardInteractions {
 
                 let mut midi_in = MidiInput::new("BeatBoxer-Midi-Input").unwrap();
                 midi_in.ignore(Ignore::None);
-
-                //counter for midi input latency
-                midi_key_values.insert(0, 0);
-                //Shift state  1 true 0 false
-                midi_key_values.insert(1, 0);
-                //navigate knops state
-                midi_key_values.insert(74, 0);
-                midi_key_values.insert(18, 0);
             }
         }
 

@@ -1,4 +1,4 @@
-package com.FerdiStro.cdj.modes;
+package com.FerdiStro.drum.modes;
 
 import com.FerdiStro.LogUtils;
 import com.FerdiStro.drum.DrumMachine;
@@ -86,6 +86,7 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     }
 
     public void onBeat(int barPosition) {
+        if (drumMachineCommandLine == null) return;
         if (Boolean.FALSE.equals(movePosition(barPosition))) {
             return;
         }

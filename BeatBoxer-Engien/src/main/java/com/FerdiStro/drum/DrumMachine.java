@@ -1,7 +1,7 @@
 package com.FerdiStro.drum;
 
 import com.FerdiStro.LogUtils;
-import com.FerdiStro.cdj.modes.AbstractMode;
+import com.FerdiStro.drum.modes.AbstractMode;
 import com.FerdiStro.drum.beat.Beat;
 import com.FerdiStro.drum.command.DrumCommand;
 import com.FerdiStro.drum.command.DrumCommandObject;

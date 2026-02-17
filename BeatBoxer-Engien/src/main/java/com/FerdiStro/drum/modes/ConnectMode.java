@@ -1,4 +1,4 @@
-package com.FerdiStro.cdj.modes;
+package com.FerdiStro.drum.modes;
 
 
 import com.FerdiStro.cdj.VirtualDevice;

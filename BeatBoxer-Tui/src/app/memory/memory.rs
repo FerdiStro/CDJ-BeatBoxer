@@ -201,6 +201,12 @@ impl Memory {
             let ptr = m_map.as_mut_ptr();
             let mut sequence: u64 = 0;
 
+            //reset file before using it
+            unsafe {
+                std::ptr::write_bytes(ptr, 0, Self::FILE_SIZE as usize);
+            }
+
+            //writing loop
             loop {
                 match rx.try_recv() {
                     Ok(data) => {
