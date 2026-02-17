@@ -3,6 +3,10 @@ name = "BeatBoxer-Tui"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "test_ui"
+path = "src/test_ui.rs"
+
 [dependencies]
 ratatui = "0.30.0"
 color-eyre = "0.6.5"

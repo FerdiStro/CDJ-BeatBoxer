@@ -38,11 +38,15 @@ impl DevState {
     const SOUND_LIB_FOLDER_PROD: &str = "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Sounds";
     const SOUND_LIB_FOLDER_DEV: &str = "/Users/maintenance/Projects/CDJ-BeatBoxer/BeatBoxer-Sounds";
 
-
     const FILE_IGNORE_WRITING: &str = "ui_states/ignore_writing.bin";
 
     fn get_paths() -> Vec<&'static str> {
-        vec!["PROD", "ui_states/set_Beat_first_state.bin", "DEV_SEL", "EXIT"]
+        vec![
+            "PROD",
+            "ui_states/set_Beat_first_state.bin",
+            "DEV_SEL",
+            "EXIT",
+        ]
     }
 
     pub fn new() -> Self {
@@ -87,18 +91,27 @@ impl DevState {
         }
     }
 
-    pub fn run_dev(&self) -> Result<()> {
+    pub fn set_dev_env(&self) {
         unsafe {
-            self.update_env_file("BEATBOXER_ENV_APP", "false")?;
-            self.update_env_file("BEATBOXER_ENV_SELECT_ALWAYS", "false")?;
-            self.update_env_file("BEATBOXER_ENV_SELECTED_PATH", &self.path)?;
-            self.update_env_file("BEATBOXER_READ_PATH", &self.path)?;
+            self.update_env_file("BEATBOXER_ENV_APP", "false").unwrap();
+            self.update_env_file("BEATBOXER_ENV_SELECT_ALWAYS", "false")
+                .unwrap();
+            self.update_env_file("BEATBOXER_ENV_SELECTED_PATH", &self.path)
+                .unwrap();
+            self.update_env_file("BEATBOXER_READ_PATH", &self.path)
+                .unwrap();
             self.update_env_file(
                 "BEATBOXER_FILE_EXPLORER_PATH",
                 DevState::SOUND_LIB_FOLDER_DEV,
-            )?;
-            self.update_env_file("BEATBOXER_WRITE_PATH", DevState::FILE_IGNORE_WRITING)?;
+            )
+            .unwrap();
+            self.update_env_file("BEATBOXER_WRITE_PATH", DevState::FILE_IGNORE_WRITING)
+                .unwrap();
         }
+    }
+
+    pub fn run_dev(&self) -> Result<()> {
+        self.set_dev_env();
         App::new()
     }
 
