@@ -9,13 +9,30 @@ public class DrumCommandObject {
 
     private final String message;
 
+
     @Getter
     private int beatPosition;
     @Getter
     private String fileName;
 
+    @Getter
+    private int effectValue;
+
+
+    public DrumCommandObject(DrumCommand command, int effectValue) {
+        if ((command != DrumCommand.EFFECT_ECHO && command != DrumCommand.EFFECT_DISTORTION && command != DrumCommand.EFFECT_REVERB)) {
+            this.message = "Wrong constructor or Effect is not implemented. Command will be ignored;";
+            this.command = DrumCommand.IGNORE;
+            return;
+        }
+        this.command = command;
+        this.message = "Effect on Mixer, (Command: " + command + ") with effect-value: " + effectValue;
+        this.effectValue = effectValue;
+    }
+
+
     public DrumCommandObject(DrumCommand command, int beatPosition, String filePath) {
-        if (command != DrumCommand.ADD_SOUND && command != DrumCommand.REMOVE_SOUND) {
+        if (command != DrumCommand.ADD_SOUND && command != DrumCommand.REMOVE_SOUND || filePath.isBlank()) {
             this.message = "Wrong constructor. Command should be ignored";
             this.command = DrumCommand.IGNORE;
             return;

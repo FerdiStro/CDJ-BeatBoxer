@@ -248,6 +248,19 @@ impl Memory {
                                 256,
                             );
 
+                            let knob_value_ptr = ptr.add(536);
+                            std::ptr::write_volatile(knob_value_ptr, data.knob_value);
+
+                            let knob_echo_ptr = ptr.add(537) as *mut bool;
+                            std::ptr::write_volatile(knob_echo_ptr, data.knob_echo);
+
+                            let knob_reverb_ptr = ptr.add(538) as *mut bool;
+                            std::ptr::write_volatile(knob_reverb_ptr, data.knob_reverb);
+
+                            let knob_distortion_ptr = ptr.add(539) as *mut bool;
+                            std::ptr::write_volatile(knob_distortion_ptr, data.knob_distortion);
+
+
                             let seq_ptr = ptr as *mut u64;
                             std::ptr::write_volatile(seq_ptr, sequence);
                         }

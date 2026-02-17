@@ -9,6 +9,7 @@ import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import com.FerdiStro.memory.bus.MemoryUpdateListener;
 import com.FerdiStro.memory.objects.ReceivedData;
 import com.FerdiStro.memory.objects.TransferObject;
+import ddf.minim.ugens.Delay;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
@@ -121,6 +122,21 @@ public abstract class AbstractMode implements MemoryUpdateListener {
                 DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.REMOVE_SOUND, lastData.getSmallCounter(), lastData.getRemoveSoundPath());
                 drumMachineCommandLine.onCommand(drumCommandObject);
             }
+
+            case EFFECT_ECHO -> {
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.EFFECT_ECHO, lastData.getKnobValue());
+                drumMachineCommandLine.onCommand(drumCommandObject);
+            }
+            case EFFECT_REVERB -> {
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.EFFECT_REVERB, lastData.getKnobValue());
+                drumMachineCommandLine.onCommand(drumCommandObject);
+            }
+
+            case EFFECT_DISTORTION -> {
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.EFFECT_DISTORTION, lastData.getKnobValue());
+                drumMachineCommandLine.onCommand(drumCommandObject);
+            }
+
             default -> onMemoryUpdateImpl(command);
         }
     }

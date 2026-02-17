@@ -132,6 +132,19 @@ public class SharedMemoryProvider {
             return;
         }
 
+        if (data.isKnobEcho()) {
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.EFFECT_ECHO);
+            return;
+        }
+
+        if (data.isKnobReverb()) {
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.EFFECT_REVERB);
+            return;
+        }
+        if (data.isKnobDistortion()) {
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.EFFECT_DISTORTION);
+            return;
+        }
         notifyMemoryUpdateListeners(MemoryUpdateCommand.DEFAULT);
     }
 

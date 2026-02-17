@@ -8,6 +8,8 @@ public enum MemoryUpdateCommand {
     DECREASE_BPM,
     SMALL_BEAT,
     ADD_BEAT_SMALL,
-    REMOVE_BEAT_SMALL
-
+    REMOVE_BEAT_SMALL,
+    EFFECT_ECHO,
+    EFFECT_REVERB,
+    EFFECT_DISTORTION,
 }

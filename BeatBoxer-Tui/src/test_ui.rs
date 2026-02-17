@@ -36,6 +36,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         "Remove-Bar-1",
         "Knop-Echo-64",
         "Knop-Echo-0",
+        "Knop-Dis-120",
+        "Knop-Dis-0",
+        "Knop-Reverb-64",
+        "Knop-Reverb-0",
     ];
     let mut state = ListState::default();
     state.select(Some(0));
@@ -92,10 +96,33 @@ fn main() -> Result<(), Box<dyn Error>> {
                         "Knop-Echo-64" => {
                             send_object.knob_echo = true;
                             send_object.knob_value = 64;
+                            memory.sender.send(send_object)?;
                         }
-                        "Knop-Echo-1" => {
+                        "Knop-Echo-0" => {
                             send_object.knob_echo = true;
-                            send_object.knob_value = 0
+                            send_object.knob_value = 0;
+                            memory.sender.send(send_object)?;
+                        }
+
+                        "Knop-Reverb-64" => {
+                            send_object.knob_reverb = true;
+                            send_object.knob_value = 64;
+                            memory.sender.send(send_object)?;
+                        }
+                        "Knop-Reverb-0" => {
+                            send_object.knob_reverb = true;
+                            send_object.knob_value = 0;
+                            memory.sender.send(send_object)?;
+                        }
+                        "Knop-Dis-120" => {
+                            send_object.knob_distortion = true;
+                            send_object.knob_value = 120;
+                            memory.sender.send(send_object)?;
+                        }
+                        "Knop-Dis-0" => {
+                            send_object.knob_distortion = true;
+                            send_object.knob_value = 0;
+                            memory.sender.send(send_object)?;
                         }
                         _ => {}
                     }

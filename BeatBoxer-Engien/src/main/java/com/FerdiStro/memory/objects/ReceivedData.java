@@ -21,6 +21,10 @@ public class ReceivedData {
     private static final int POSITION_REMOVE_SOUND_ON_SMALL_BEAT = 272;
     private static final int POSITION_START_REMOVE_SOUND_PATH = 280;
 
+    private static final int POSITION_KNOB_VALUE = 536;
+    private static final int POSITION_KNOB_ECHO = 537;
+    private static final int POSITION_KNOB_REVERB = 538;
+    private static final int POSITION_KNOB_DISTORTION = 539;
 
     @Getter
     private final boolean increaseBpm;
@@ -40,6 +44,14 @@ public class ReceivedData {
     private final boolean removeSoundOnSmallBeat;
     @Getter
     private final String removeSoundPath;
+    @Getter
+    private final byte knobValue;
+    @Getter
+    private final boolean knobEcho;
+    @Getter
+    private final boolean knobReverb;
+    @Getter
+    private final boolean knobDistortion;
 
 
     public ReceivedData(MappedByteBuffer buffer) {
@@ -55,6 +67,11 @@ public class ReceivedData {
 
         this.removeSoundOnSmallBeat = byteToBoolean(buffer.get(POSITION_REMOVE_SOUND_ON_SMALL_BEAT));
         this.removeSoundPath = byteToString(buffer, POSITION_START_REMOVE_SOUND_PATH);
+
+        this.knobValue = buffer.get(POSITION_KNOB_VALUE);
+        this.knobEcho = byteToBoolean(buffer.get(POSITION_KNOB_ECHO));
+        this.knobReverb = byteToBoolean(buffer.get(POSITION_KNOB_REVERB));
+        this.knobDistortion = byteToBoolean(buffer.get(POSITION_KNOB_DISTORTION));
 
     }
 
