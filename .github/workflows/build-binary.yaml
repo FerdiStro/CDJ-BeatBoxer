@@ -1,0 +1,62 @@
+name: Build & Release CDJ-BeatBoxer
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    name: Build for ${{ matrix.os_name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          # 1. Apple Silicon (M1/M2/M3 etc.)
+          - runner: macos-14
+            os_name: Mac-Apple-Silicon
+            binary_name: CDJ-BeatBoxer-Mac-ARM64
+
+          # 2. Raspberry Pi (Linux ARM64 / aarch64)
+          - runner: ubuntu-24.04-arm
+            os_name: Linux-Raspberry-Pi
+            binary_name: CDJ-BeatBoxer-Pi-ARM64
+
+    steps:
+      - name: 1. Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: 3. Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 4. Build Java Backend (BeatBoxer-Engine)
+        run: |
+          cd BeatBoxer-Engien 
+          ./gradlew bundleApp
+
+      - name: 5. Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 6. Build Rust Frontend (BeatBoxer-TUI)
+        run: |
+          cd BeatBoxer-TUI
+          cargo build --release --bin prod_binary
+
+      - name: 7. Rename Binary for Release
+        run: |
+          mv BeatBoxer-TUI/target/release/binary_runner ${{ matrix.binary_name }}
+
+      - name: 8. Upload to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.binary_name }}
+          generate_release_notes: true

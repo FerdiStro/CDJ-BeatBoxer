@@ -1,7 +1,11 @@
 [package]
-name = "BeatBoxer-Tui"
+name = "beatboxer-tui"
 version = "0.1.0"
 edition = "2024"
+
+[[bin]]
+name = "prod_binary"
+path = "src/prod_binary.rs"
 
 [[bin]]
 name = "test_ui"

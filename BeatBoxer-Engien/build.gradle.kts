@@ -1,20 +1,55 @@
-import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
-
 plugins {
   id("java")
   id("application")
+  id("org.beryx.jlink") version "3.2.1"
 }
 
 group = "com.FerdiStro"
+
 version = "1.0-SNAPSHOT"
 
 repositories {
-
-
   mavenCentral()
   maven("https://clojars.org/repo")
 }
 
+tasks.register<Zip>("bundleApp") {
+  description = "Zip JVM and Engien"
+  group = JavaBasePlugin.BUILD_TASK_NAME
+
+  dependsOn("installDist", "createJre")
+
+  archiveFileName.set("beat-boxer_engien.zip")
+  destinationDirectory.set(layout.buildDirectory.dir("bundle"))
+
+  from(layout.buildDirectory.dir("custom-jre")) { into("jre") }
+
+  from(layout.buildDirectory.dir("install/${project.name}")) { into("app") }
+}
+
+tasks.register<Exec>("createJre") {
+  description = "Create Custom mini-JVM for MINIM (Sound-library)"
+  group = JavaBasePlugin.BUILD_TASK_NAME
+
+  val jreDir = layout.buildDirectory.dir("custom-jre").get().asFile
+  outputs.dir(jreDir)
+
+  doFirst { jreDir.deleteRecursively() }
+
+  val javaHome = System.getProperty("java.home")
+
+  commandLine(
+      "$javaHome/bin/jlink",
+      "--add-modules",
+      "java.base,java.desktop,java.logging,jdk.unsupported",
+      "--strip-debug",
+      "--no-man-pages",
+      "--no-header-files",
+      "--compress=2",
+      "--output",
+      jreDir.absolutePath,
+  )
+}
 
 dependencies {
   testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -31,22 +66,10 @@ dependencies {
   implementation("ddf.minim:ddf.minim:2.2.0")
 }
 
-
-//tasks.register<JavaExec>("run") {
-//  group = "application"
-//  description = "Run Drum machine for Tests"
-//
-//}
-//tasks.register('runMinimal', JavaExec) {
-//  group = 'application'
-//  description = 'Runs MinimalRunner.Main'
-//  classpath = sourceSets.main.runtimeClasspath
-//  mainClass = 'MinimalRunner.Main'
-//}
-
 application {
   mainClass = "com.FerdiStro.Main"
-  applicationDefaultJvmArgs = listOf("-Djava.net.preferIPv4Stack=true", "-Djava.net.preferIPv4Addresses=true")
+  applicationDefaultJvmArgs =
+      listOf("-Djava.net.preferIPv4Stack=true", "-Djava.net.preferIPv4Addresses=true")
 }
 
 tasks.test { useJUnitPlatform() }

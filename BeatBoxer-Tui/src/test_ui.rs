@@ -1,3 +1,5 @@
+use beatboxer_tui::app::memory::memory::{Memory, ReceiveObject, SendObject};
+use beatboxer_tui::dev_state::{DevState, DevStatus};
 use crossterm::event;
 use crossterm::event::{Event, KeyCode};
 use ratatui::widgets::Borders;
@@ -9,8 +11,6 @@ use ratatui::{
 use std::error::Error;
 use std::io;
 use std::sync::{Arc, Mutex};
-use BeatBoxer_Tui::app::memory::memory::{Memory, ReceiveObject, SendObject};
-use BeatBoxer_Tui::dev_state::{DevState, DevStatus};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut dev_state = DevState::new();

@@ -3,19 +3,6 @@
 version = 4
 
 [[package]]
-name = "BeatBoxer-Tui"
-version = "0.1.0"
-dependencies = [
- "color-eyre",
- "crossbeam-channel",
- "crossterm",
- "dotenvy",
- "memmap2",
- "midir",
- "ratatui",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -108,6 +95,19 @@ name = "base64"
 version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+
+[[package]]
+name = "beatboxer-tui"
+version = "0.1.0"
+dependencies = [
+ "color-eyre",
+ "crossbeam-channel",
+ "crossterm",
+ "dotenvy",
+ "memmap2",
+ "midir",
+ "ratatui",
+]
 
 [[package]]
 name = "bit-set"

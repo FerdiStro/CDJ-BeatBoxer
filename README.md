@@ -10,6 +10,19 @@
 
 ---
 
+## Build and Release
+
+Project CI/CD listen to  git tag `- 'v*'`.  <br>
+To build on push just add new tag:
+
+```bash
+git tag vX.X.X
+git push origin vX.X.X
+```
+
+
+
+
 
 ### System dependencies
 

@@ -56,5 +56,8 @@ public class Main {
 
 
         sharedMemoryProvider.setStopReading(false);
+
+
+        log.info("BeatBoxer-Engine is ready. Can Start UI (UI_LISTENER_COMMAND: BACKEND_READY)");
     }
 }
