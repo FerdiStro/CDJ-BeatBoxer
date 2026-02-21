@@ -40,7 +40,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         "Knop-Dis-0",
         "Knop-Reverb-64",
         "Knop-Reverb-0",
-        "On-Shoot-Mdus-Trigger",
+        "On-Shoot-Modus-Trigger",
+        "On-Shoot-Direct",
+        "On-Shoot-Direct-On-Beat",
     ];
     let mut state = ListState::default();
     state.select(Some(0));
@@ -125,10 +127,26 @@ fn main() -> Result<(), Box<dyn Error>> {
                             send_object.knob_value = 0;
                             memory.sender.send(send_object)?;
                         }
-                        "On-Shoot-Mdus-Trigger" => {
+                        "On-Shoot-Modus-Trigger" => {
                             send_object.on_shoot_modus = true;
                             memory.sender.send(send_object)?;
                         }
+                        "On-Shoot-Direct" => {
+                            send_object.selected_sound_path = SendObject::convert_string_byte(
+                                "/Users/maintenance/Projects/CDJ-BeatBoxer/BeatBoxer-Sounds/airy-groove-kick.wav",
+                            );
+                            send_object.on_shoot_modus = true;
+                            memory.sender.send(send_object)?;
+                        }
+                        "On-Shoot-Direct-On-Beat" => {
+                            send_object.selected_sound_path = SendObject::convert_string_byte(
+                                "/Users/maintenance/Projects/CDJ-BeatBoxer/BeatBoxer-Sounds/airy-groove-kick.wav",
+                            );
+                            send_object.small_counter = u8::MAX;
+                            send_object.on_shoot_modus = true;
+                            memory.sender.send(send_object)?;
+                        }
+
                         _ => {}
                     }
                 }

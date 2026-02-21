@@ -40,6 +40,17 @@ public class DrumCommandObject {
         this.message = "Default constructor with command: " + command;
     }
 
+    public DrumCommandObject(DrumCommand command, String filePath) {
+        if (command != DrumCommand.ON_SHOOT_DIRECT && command != DrumCommand.ON_SHOOT_DIRECT_ON_BEAT || filePath.isBlank()) {
+            this.message = "Wrong constructor. Command should be ignored";
+            this.command = DrumCommand.IGNORE;
+            return;
+        }
+        this.command = command;
+        this.message = "On Shoot (Command: " + command + ") with filePath: " + filePath;
+        this.fileName = filePath;
+    }
+
 
     public DrumCommandObject(DrumCommand command, int beatPosition, String filePath) {
         if (command != DrumCommand.ADD_SOUND && command != DrumCommand.REMOVE_SOUND || filePath.isBlank()) {

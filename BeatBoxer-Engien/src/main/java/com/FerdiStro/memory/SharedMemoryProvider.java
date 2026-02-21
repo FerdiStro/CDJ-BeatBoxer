@@ -99,8 +99,6 @@ public class SharedMemoryProvider {
     private void updateHandler(ReceivedData data) {
         if (Boolean.TRUE.equals(stopReading)) return;
 
-        //reading is active:
-        log.debug(data);
         this.lastData = data;
 
         if (data.isRemoveSoundOnSmallBeat()) {
@@ -123,6 +121,15 @@ public class SharedMemoryProvider {
         }
 
         if (data.isOnShootModus()) {
+            if (!data.getSelectedSoundPath().isBlank()) {
+
+                if (data.getSmallCounter() == 255) {
+                    notifyMemoryUpdateListeners(MemoryUpdateCommand.ON_SHOOT_DIRECT_ON_BEAT);
+                    return;
+                }
+                notifyMemoryUpdateListeners(MemoryUpdateCommand.ON_SHOOT_DIRECT);
+                return;
+            }
             notifyMemoryUpdateListeners(MemoryUpdateCommand.ON_SHOOT_MODUS);
             return;
         }

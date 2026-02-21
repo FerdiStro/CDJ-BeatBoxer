@@ -5,6 +5,8 @@ public enum MemoryUpdateCommand {
     DEFAULT,
     BECOME_MASTER,
     ON_SHOOT_MODUS,
+    ON_SHOOT_DIRECT,
+    ON_SHOOT_DIRECT_ON_BEAT,
     INCREASE_BPM,
     DECREASE_BPM,
     SMALL_BEAT,

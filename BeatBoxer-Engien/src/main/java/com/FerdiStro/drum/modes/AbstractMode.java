@@ -108,6 +108,7 @@ public abstract class AbstractMode implements MemoryUpdateListener {
 
     @Override
     public void onMemoryUpdate(MemoryUpdateCommand command) {
+        log.debug(command);
 
         ReceivedData lastData = memoryProvider.getLastData();
         switch (command) {
@@ -137,6 +138,16 @@ public abstract class AbstractMode implements MemoryUpdateListener {
             }
             case ON_SHOOT_MODUS -> {
                 DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.ON_SHOOT_MODE);
+                drumMachineCommandLine.onCommand(drumCommandObject);
+            }
+
+            case ON_SHOOT_DIRECT -> {
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.ON_SHOOT_DIRECT, lastData.getSelectedSoundPath());
+                drumMachineCommandLine.onCommand(drumCommandObject);
+            }
+
+            case ON_SHOOT_DIRECT_ON_BEAT -> {
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.ON_SHOOT_DIRECT_ON_BEAT, lastData.getSelectedSoundPath());
                 drumMachineCommandLine.onCommand(drumCommandObject);
             }
 

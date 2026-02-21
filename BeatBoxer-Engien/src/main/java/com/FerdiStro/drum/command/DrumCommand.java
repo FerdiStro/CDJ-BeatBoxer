@@ -8,5 +8,7 @@ public enum DrumCommand {
     EFFECT_REVERB,
     EFFECT_DISTORTION,
     ON_SHOOT_MODE,
+    ON_SHOOT_DIRECT,
+    ON_SHOOT_DIRECT_ON_BEAT,
 }
 

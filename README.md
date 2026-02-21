@@ -1,28 +1,34 @@
 # CDJ-BeatBoxer
 
----
+A drum machine fully synced to your CDJs via ProDJ Link using beat-link. Better version
+of [CDJ-BeatBox](https://github.com/FerdiStro/CDJ-BeatBox).Compile and run in a single bin for performative TUI build in
+Rust.
+<br>
+
+[![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?logo=openjdk&logoColor=white)](#) [![Rust](https://img.shields.io/badge/Rust-%23000000.svg?e&logo=rust&logoColor=white)](#)
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/FerdiStro/CDJ-BeatBoxer/build-binary.yaml)
+![GitHub Release](https://img.shields.io/github/v/release/FerdiStro/CDJ-BeatBoxer)
+
+
 
 ## Dev-Setup
 
 1. Install [mise](https://mise.jdx.dev/) and follow instruction guides
-2. Run-`mise trust` 
+2. Run-`mise trust`
 3. Run-`mise install`
 
 ---
 
 ## Build and Release
 
-Project CI/CD listen to  git tag `- 'v*'`.  <br>
+Project CI/CD listen to git tag `- 'v*'`.  <br>
 To build on push just add new tag:
 
 ```bash
 git tag vX.X.X
 git push origin vX.X.X
 ```
-
-
-
-
 
 ### System dependencies
 
@@ -31,7 +37,6 @@ git push origin vX.X.X
 
 
 ---
-
 
 ### Binary-Structs
 
@@ -88,7 +93,6 @@ Engine -> TUI <br><br>
 | **2408 - 2663**        | 256            | `sound_10_path`       | `byte[]`    | `[u8; 256]` |
 | **2664**               | 1              | `sound_10_slot`       | `byte`      | `u8`        |
 | **2665 - 2671**        | 7              | *Padding (Align 264)* | -           | `[u8; 7]`   |
-
 
 TUI -> Engine<br><br>
 **IN:** `toEngien_shm.bin` <br>

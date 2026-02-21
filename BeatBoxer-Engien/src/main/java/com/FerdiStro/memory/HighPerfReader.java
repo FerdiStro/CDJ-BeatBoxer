@@ -90,6 +90,8 @@ public class HighPerfReader implements Runnable {
                 }
             } catch (Exception e) {
                 log.error("Error in Hot-Loop", e);
+                lastSequence = lastSequence + 1;
+                log.warn("Set lastSequence-counter to += 1 and ignore last received data");
             }
         }
 

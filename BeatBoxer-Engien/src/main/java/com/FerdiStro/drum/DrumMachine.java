@@ -17,9 +17,7 @@ import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 public class DrumMachine {
 
@@ -58,6 +56,7 @@ public class DrumMachine {
      */
     private final String[] onShootsOnBeatPaths = new String[8];
 
+    private final Queue<Sampler> onShootOnBeatQueue = new ArrayDeque<>(10);
 
     private final Beat[] bigGrid = new Beat[64];
 
@@ -169,6 +168,8 @@ public class DrumMachine {
             distortionEffect.setBitRes(bits);
         });
         drumCommandCallBackMap.put(DrumCommand.ON_SHOOT_MODE, drumCommandObject -> setOnShootMode(!isOnShootMode()));
+        drumCommandCallBackMap.put(DrumCommand.ON_SHOOT_DIRECT, this::addDirectOnShoot);
+        drumCommandCallBackMap.put(DrumCommand.ON_SHOOT_DIRECT_ON_BEAT, this::addDirectOnShootOnBeat);
         drumCommandCallBackMap.put(DrumCommand.IGNORE, drumCommandObject -> log.info("Command ignored"));
     }
 
@@ -189,6 +190,13 @@ public class DrumMachine {
 //-----------------OnBeat handling (extern clock)-----------------
 
     public void onBeat(int beatPos) {
+
+        //OnShoots on Next Beat
+        Sampler cmd;
+        while ((cmd = this.onShootOnBeatQueue.poll()) != null) {
+            cmd.trigger();
+        }
+
         //Beat on Grid
         Beat beat = getValidBeat(beatPos);
         if (beat != null) {
@@ -273,6 +281,39 @@ public class DrumMachine {
 
 //-----------------OnShoot handling -----------------
 
+    private void addDirectOnShootOnBeat(DrumCommandObject drumCommandObject) {
+        Sampler cachedDirectOnShoot = getCachedDirectOnShoot(drumCommandObject.getFileName());
+        if (cachedDirectOnShoot == null) return;
+        this.onShootOnBeatQueue.offer(cachedDirectOnShoot);
+    }
+
+    private void addDirectOnShoot(DrumCommandObject drumCommandObject) {
+        Sampler cachedDirectOnShoot = getCachedDirectOnShoot(drumCommandObject.getFileName());
+        if (cachedDirectOnShoot == null) return;
+        cachedDirectOnShoot.trigger();
+    }
+
+    private Sampler getCachedDirectOnShoot(String filePath) {
+        int baetRef = 7;
+
+        for (int cacheIndex = 0; cacheIndex < this.onShootsOnBeatPaths.length; cacheIndex++) {
+            String cachedPath = this.onShootsOnBeatPaths[cacheIndex];
+
+            if (cachedPath != null && cachedPath.equals(filePath)) {
+                onShootCacheTimeStamps[cacheIndex] = ON_SHOOT_CACHE_TIME;
+                return this.cachedOnShoots[cacheIndex];
+            }
+        }
+        this.putOnShootToCache(baetRef, filePath, false);
+        int newCacheIndex = this.getOnShootFromCache(baetRef, filePath);
+        if (newCacheIndex != -1) {
+            return this.cachedOnShoots[newCacheIndex];
+        }
+
+        log.error("Caching not working. Command will be ignored!");
+        return null;
+    }
+
     private void playOnShoot(int beatPos, int cacheIndex) {
         int onShottRefIndex = this.onShootCacheRef[beatPos][cacheIndex];
         Sampler onShootSample = cachedOnShoots[onShottRefIndex];
@@ -292,7 +333,7 @@ public class DrumMachine {
             return;
         }
 
-        this.putOnShootToCache(beatPosition, filePath);
+        this.putOnShootToCache(beatPosition, filePath, true);
 
         int newCacheIndex = this.getOnShootFromCache(beatPosition, filePath);
 
@@ -321,15 +362,14 @@ public class DrumMachine {
 
         for (int cacheIndex = 0; cacheIndex < cacheIndexes.length; cacheIndex++) {
             int onShootCachePath = cacheIndexes[cacheIndex];
-            if (onShootCachePath != -1 && onShootsOnBeatPaths[cacheIndex].equals(filePath)) {
-
+            if (onShootCachePath != -1 && this.onShootsOnBeatPaths[cacheIndex] != null && this.onShootsOnBeatPaths[cacheIndex].equals(filePath)) {
                 return onShootCacheRef[beatRef][cacheIndex];
             }
         }
         return -1;
     }
 
-    private void putOnShootToCache(int beatRef, String filePath) {
+    private void putOnShootToCache(int beatRef, String filePath, boolean addToGrid) {
         boolean addedToCache = false;
         for (int cachedIndex = 0; cachedIndex < cachedOnShoots.length; cachedIndex++) {
             Sampler cachedOnShoot = cachedOnShoots[cachedIndex];
@@ -339,7 +379,7 @@ public class DrumMachine {
 
                 cachedOnShoots[cachedIndex] = sampler;
                 onShootCacheTimeStamps[cachedIndex] = ON_SHOOT_CACHE_TIME;
-                onShootsPlayOnBeat[beatRef][cachedIndex] = true;
+                onShootsPlayOnBeat[beatRef][cachedIndex] = addToGrid;
                 onShootBeatRef[cachedIndex] = beatRef;
                 onShootsOnBeatPaths[cachedIndex] = filePath;
 
@@ -375,7 +415,7 @@ public class DrumMachine {
         }
 
         deleteOnShootFromCache(lowestTimeStampIndex, beatRef);
-        putOnShootToCache(beatRef, filePath);
+        putOnShootToCache(beatRef, filePath, addToGrid);
     }
 
     private void checkOnShootClenUp() {

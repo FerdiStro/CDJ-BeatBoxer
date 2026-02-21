@@ -20,6 +20,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [0.0.2] - unreleased
+
+### Added
+
+- BeatBoxer-Engine: Direct OnShoots
+- BeatBoxer-Engine: Direct OnShoots on next beat
+- 
+
+### Fixed
+- BeatBoxer-Engine: Break Loop on`[SHMR] ERROR  Error in Hot-Loop`
+- 
+
 ## [0.0.1] - 21.02.2026
 
 ### Added
