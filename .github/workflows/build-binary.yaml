@@ -52,7 +52,7 @@ jobs:
 
       - name: 7. Rename Binary for Release
         run: |
-          mv BeatBoxer-Tui/target/release/binary_runner ${{ matrix.binary_name }}
+          mv BeatBoxer-Tui/target/release/prod_binary ${{ matrix.binary_name }}
 
       - name: 8. Upload to GitHub Releases
         uses: softprops/action-gh-release@v2
