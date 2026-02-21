@@ -42,9 +42,14 @@ jobs:
           cd BeatBoxer-Engien 
           ./gradlew bundleApp
 
-      - name: 5. Setup Rust
+      - name: 5. (1/2) Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: 5. ( 2/2) Install Linux Audio Dependencies (ALSA)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev pkg-config
       - name: 6. Build Rust Frontend (BeatBoxer-TUI)
         run: |
           cd BeatBoxer-Tui
