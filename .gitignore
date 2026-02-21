@@ -3,3 +3,5 @@
 /BeatBoxer-Engien/.gradle/
 .idea/
 BeatBoxer-Tui/ui_states/ignore_writing.bin
+fromEngien_shm.bin
+toEngien_shm.bin

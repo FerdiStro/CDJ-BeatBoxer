@@ -1,13 +1,26 @@
 # CDJ-BeatBoxer
 
+---
+
+## Dev-Setup
+
+1. Install [mise](https://mise.jdx.dev/) and follow instruction guides
+2. Run-`mise trust` 
+3. Run-`mise install`
+
+---
+
+
 ### System dependencies
 
 `sudo apt install libasound2-dev`
 
-<br>
-https://ratatui.rs/
 
-### Binary-Struct
+
+---
+
+
+### Binary-Structs
 
 Engine -> TUI <br><br>
 **IN:** `fromEngien_shm.bin` <br>
@@ -19,7 +32,8 @@ Engine -> TUI <br><br>
 | **8 - 15**             | 8              | `BPM`                 | `double`    | `f64`       |
 | **16**                 | 1              | `smallCounter`        | `byte`      | `u8`        |
 | **17**                 | 1              | `isMaster`            | `boolean`   | `bool`      |
-| **18 - 23**            | 6              | *Padding*             | -           | `[u8; 6]`   |
+| **18**                 | 1              | `isOnShootModus`      | `boolean`   | `bool`      |
+| **19 - 23**            | 6              | *Padding*             | -           | `[u8; 6]`   |
 | **24 - 31**            | 8              | `totalCounter`        | `long`      | `u64`       |
 |                        |                | **--- SOUND 1 ---**   |             |             |
 | **32 - 287**           | 256            | `sound_1_path`        | `byte[]`    | `[u8; 256]` |
@@ -62,7 +76,6 @@ Engine -> TUI <br><br>
 | **2664**               | 1              | `sound_10_slot`       | `byte`      | `u8`        |
 | **2665 - 2671**        | 7              | *Padding (Align 264)* | -           | `[u8; 7]`   |
 
- ---
 
 TUI -> Engine<br><br>
 **IN:** `toEngien_shm.bin` <br>
@@ -74,7 +87,8 @@ TUI -> Engine<br><br>
 | 8         | 1             | increase_bpm               | boolean     | bool        |
 | 9         | 1             | decrease_bpm               | boolean     | bool        |
 | 10        | 1             | become_master              | boolean     | bool        |
-| 11 - 13   | 3             | Padding                    | -           | [u8; 3]     |
+| 11        | 1             | on_shoot_modus             | boolean     | bool        |
+| 12 - 13   | 3             | Padding                    | -           | [u8; 3]     |
 | 14        | 1             | small_counter              | byte        | u8          |
 | 15        | 1             | add_sound_on_small_beat    | boolean     | bool        |
 | 16 - 271  | 256           | selected_sound_path        | byte[]      | [u8; 256]   |

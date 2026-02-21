@@ -39,12 +39,11 @@ public class Beat {
     }
 
     public void addSample(String filePath) {
-        Sampler sampler = new Sampler(filePath, 4, minim);
-        sampler.patch(mixer);
-
         boolean added = false;
         for (int i = 0; i < samplers.length; i++) {
             if (samplers[i] == null) {
+                Sampler sampler = new Sampler(filePath, 4, minim);
+                sampler.patch(mixer);
                 samplers[i] = sampler;
                 samplersNames[i] = filePath;
                 added = true;

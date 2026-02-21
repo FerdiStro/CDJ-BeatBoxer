@@ -40,6 +40,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "Knop-Dis-0",
         "Knop-Reverb-64",
         "Knop-Reverb-0",
+        "On-Shoot-Mdus-Trigger",
     ];
     let mut state = ListState::default();
     state.select(Some(0));
@@ -122,6 +123,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                         "Knop-Dis-0" => {
                             send_object.knob_distortion = true;
                             send_object.knob_value = 0;
+                            memory.sender.send(send_object)?;
+                        }
+                        "On-Shoot-Mdus-Trigger" => {
+                            send_object.on_shoot_modus = true;
                             memory.sender.send(send_object)?;
                         }
                         _ => {}

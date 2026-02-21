@@ -122,6 +122,12 @@ public class SharedMemoryProvider {
             return;
         }
 
+        if (data.isOnShootModus()) {
+            notifyMemoryUpdateListeners(MemoryUpdateCommand.ON_SHOOT_MODUS);
+            return;
+        }
+
+
         if (data.isIncreaseBpm()) {
             notifyMemoryUpdateListeners(MemoryUpdateCommand.INCREASE_BPM);
             return;

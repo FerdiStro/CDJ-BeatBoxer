@@ -30,6 +30,16 @@ public class DrumCommandObject {
         this.effectValue = effectValue;
     }
 
+    public DrumCommandObject(DrumCommand command) {
+        if (command != DrumCommand.ON_SHOOT_MODE) {
+            this.message = "Wrong constructor!. Command not implemented";
+            this.command = DrumCommand.IGNORE;
+            return;
+        }
+        this.command = command;
+        this.message = "Default constructor with command: " + command;
+    }
+
 
     public DrumCommandObject(DrumCommand command, int beatPosition, String filePath) {
         if (command != DrumCommand.ADD_SOUND && command != DrumCommand.REMOVE_SOUND || filePath.isBlank()) {

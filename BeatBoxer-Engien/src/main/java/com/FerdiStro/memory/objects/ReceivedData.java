@@ -13,6 +13,7 @@ public class ReceivedData {
     private static final int POSITION_INCREASE_BPM = 8;
     private static final int POSITION_DECREASE_BPM = 9;
     private static final int POSITION_BECOME_MASTER = 10;
+    private static final int POSITION_ON_SHOOT_MODUS = 11;
 
     private static final int POSITION_SMALL_COUNTER = 14;
     private static final int POSITION_ADD_SOUND_ON_SMALL_BEAT = 15;
@@ -33,13 +34,13 @@ public class ReceivedData {
     @Getter
     private final boolean becomeMaster;
     @Getter
+    private final boolean onShootModus;
+    @Getter
     private final int smallCounter;
     @Getter
     private final boolean addSoundOnSmallBeat;
-
     @Getter
     private final String selectedSoundPath;
-
     @Getter
     private final boolean removeSoundOnSmallBeat;
     @Getter
@@ -58,6 +59,8 @@ public class ReceivedData {
         this.increaseBpm = byteToBoolean(buffer.get(ReceivedData.POSITION_INCREASE_BPM));
         this.decreaseBpm = byteToBoolean(buffer.get(ReceivedData.POSITION_DECREASE_BPM));
         this.becomeMaster = byteToBoolean(buffer.get(ReceivedData.POSITION_BECOME_MASTER));
+        this.onShootModus = byteToBoolean(buffer.get(ReceivedData.POSITION_ON_SHOOT_MODUS));
+
 
         this.smallCounter = Byte.toUnsignedInt(buffer.get(ReceivedData.POSITION_SMALL_COUNTER));
         this.addSoundOnSmallBeat = byteToBoolean(buffer.get(ReceivedData.POSITION_ADD_SOUND_ON_SMALL_BEAT));

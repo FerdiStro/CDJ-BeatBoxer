@@ -11,7 +11,8 @@ pub struct SendObject {
     pub increase_bpm: bool,
     pub decrease_bpm: bool,
     pub become_master: bool,
-    _padding_1: [u8; 3],
+    pub on_shoot_modus: bool,
+    _padding_1: [u8; 2],
     pub small_counter: u8,
     pub add_sound_on_small_beat: bool,
     pub selected_sound_path: [u8; 256],
@@ -27,23 +28,23 @@ pub struct SendObject {
 impl SendObject {
     pub fn knop_reverb() -> Self {
         Self::new(
-            0, false, false, false, "", 0, false, false, "", 0, false, true, false,
+            0, false, false, false, false, "", 0, false, false, "", 0, false, true, false,
         )
     }
     pub fn knop_distortion() -> Self {
         Self::new(
-            0, false, false, false, "", 0, false, false, "", 0, false, false, true,
+            0, false, false, false, false, "", 0, false, false, "", 0, false, false, true,
         )
     }
     pub fn knop_echo() -> Self {
         Self::new(
-            0, false, false, false, "", 0, false, false, "", 0, true, false, false,
+            0, false, false, false, false, "", 0, false, false, "", 0, true, false, false,
         )
     }
 
     pub fn default() -> Self {
         Self::new(
-            0, false, false, false, "", 0, false, false, "", 0, false, false, false,
+            0, false, false, false, false, "", 0, false, false, "", 0, false, false, false,
         )
     }
 
@@ -60,6 +61,7 @@ impl SendObject {
         increase: bool,
         decrease: bool,
         master: bool,
+        on_shoot_modus: bool,
         path: &str,
         small_counter: u8,
         add_sound_on_small_beat: bool,
@@ -78,7 +80,8 @@ impl SendObject {
             increase_bpm: increase,
             decrease_bpm: decrease,
             become_master: master,
-            _padding_1: [0; 3],
+            on_shoot_modus,
+            _padding_1: [0; 2],
             small_counter,
             add_sound_on_small_beat,
             selected_sound_path,
@@ -118,6 +121,7 @@ pub struct ReceiveObject {
     pub bpm: f64,
     pub small_counter: u8,
     pub is_master: bool,
+    pub is_on_shoot_modus: bool,
     pub total_counter: u64,
 
     //Sounds
@@ -130,6 +134,7 @@ impl ReceiveObject {
             0,
             0.0,
             0,
+            false,
             false,
             0,
             [SoundEntry {
@@ -145,6 +150,7 @@ impl ReceiveObject {
         bpm: f64,
         small_counter: u8,
         is_master: bool,
+        is_on_shoot_modus: bool,
         total_counter: u64,
         sounds: [SoundEntry; 10],
     ) -> Self {
@@ -153,6 +159,7 @@ impl ReceiveObject {
             bpm,
             small_counter,
             is_master,
+            is_on_shoot_modus,
             total_counter,
             sounds,
         }
@@ -221,6 +228,9 @@ impl Memory {
                             let become_master_ptr = ptr.add(10) as *mut bool;
                             std::ptr::write_volatile(become_master_ptr, data.become_master);
 
+                            let on_shoot_modus_ptr = ptr.add(11) as *mut bool;
+                            std::ptr::write_volatile(on_shoot_modus_ptr, data.on_shoot_modus);
+
                             let small_counter_ptr = ptr.add(14);
                             std::ptr::write_volatile(small_counter_ptr, data.small_counter);
 
@@ -259,7 +269,6 @@ impl Memory {
 
                             let knob_distortion_ptr = ptr.add(539) as *mut bool;
                             std::ptr::write_volatile(knob_distortion_ptr, data.knob_distortion);
-
 
                             let seq_ptr = ptr as *mut u64;
                             std::ptr::write_volatile(seq_ptr, sequence);
@@ -315,6 +324,7 @@ impl Memory {
                             guard.total_counter = data.total_counter;
                             guard.small_counter = data.small_counter;
                             guard.is_master = data.is_master;
+                            guard.is_on_shoot_modus = data.is_on_shoot_modus;
                             guard.sounds = data.sounds;
                         }
                     } else {

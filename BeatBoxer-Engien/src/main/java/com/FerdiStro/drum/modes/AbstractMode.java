@@ -9,7 +9,6 @@ import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import com.FerdiStro.memory.bus.MemoryUpdateListener;
 import com.FerdiStro.memory.objects.ReceivedData;
 import com.FerdiStro.memory.objects.TransferObject;
-import ddf.minim.ugens.Delay;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
@@ -134,6 +133,10 @@ public abstract class AbstractMode implements MemoryUpdateListener {
 
             case EFFECT_DISTORTION -> {
                 DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.EFFECT_DISTORTION, lastData.getKnobValue());
+                drumMachineCommandLine.onCommand(drumCommandObject);
+            }
+            case ON_SHOOT_MODUS -> {
+                DrumCommandObject drumCommandObject = new DrumCommandObject(DrumCommand.ON_SHOOT_MODE);
                 drumMachineCommandLine.onCommand(drumCommandObject);
             }
 
