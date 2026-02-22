@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -26,6 +27,12 @@ public class SharedMemoryProvider {
     private static final Integer FILE_LENGTH = 4096;
     private static SharedMemoryProvider INSTANCE = null;
     private final List<MemoryUpdateListener> memoryUpdateListeners = new ArrayList<>();
+    /**
+     * WaveformSharedMemories for each extern player. Max 2 Players supported
+     */
+    private final WaveformSharedMemory[] waveformSharedMemories = new WaveformSharedMemory[2];
+
+
     Thread readerThread = null;
     private RandomAccessFile fromEngienRandomAccessFile;
     private FileChannel fromEngienChannel;
@@ -45,6 +52,24 @@ public class SharedMemoryProvider {
             INSTANCE = new SharedMemoryProvider();
         }
         return INSTANCE;
+    }
+
+    public WaveformSharedMemory getWaveformSharedMemories(int playerId) {
+        if (playerId > waveformSharedMemories.length) {
+            log.error("Player {} is not supported", playerId);
+            return null;
+        }
+        WaveformSharedMemory waveformSharedMemory = waveformSharedMemories[playerId - 1];
+
+        if (waveformSharedMemory == null) {
+            try {
+                waveformSharedMemories[playerId - 1] = new WaveformSharedMemory(playerId);
+            } catch (IOException ignored) {
+                return null;
+            }
+        }
+
+        return waveformSharedMemories[playerId - 1];
     }
 
     public void addMemoryUpdateListeners(MemoryUpdateListener updateListener) {
@@ -181,4 +206,6 @@ public class SharedMemoryProvider {
             log.error("Error closing shared memory", e);
         }
     }
+
+
 }

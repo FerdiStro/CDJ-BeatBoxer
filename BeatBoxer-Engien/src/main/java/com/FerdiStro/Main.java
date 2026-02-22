@@ -20,7 +20,7 @@ public class Main {
     protected static final Logger log = LogManager.getLogger();
 
 
-    private static final int MAX_ATTEMPTS = 0;
+    private static final int MAX_ATTEMPTS = 2;
 
     public static void main(String[] args) {
         log.info(LogUtils.LINE_SEPARATOR);

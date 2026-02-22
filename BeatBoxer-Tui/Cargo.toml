@@ -11,6 +11,10 @@ path = "src/prod_binary.rs"
 name = "test_ui"
 path = "src/test_ui.rs"
 
+[[bin]]
+name = "mem_test"
+path = "src/mem_test.rs"
+
 [dependencies]
 ratatui = "0.30.0"
 color-eyre = "0.6.5"

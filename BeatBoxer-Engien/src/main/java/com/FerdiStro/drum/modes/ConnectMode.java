@@ -2,10 +2,14 @@ package com.FerdiStro.drum.modes;
 
 
 import com.FerdiStro.cdj.VirtualDevice;
+import com.FerdiStro.memory.WaveformSharedMemory;
 import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import org.deepsymmetry.beatlink.Beat;
 import org.deepsymmetry.beatlink.DeviceUpdate;
 import org.deepsymmetry.beatlink.MasterListener;
+import org.deepsymmetry.beatlink.data.WaveformDetailUpdate;
+import org.deepsymmetry.beatlink.data.WaveformListener;
+import org.deepsymmetry.beatlink.data.WaveformPreviewUpdate;
 
 
 public class ConnectMode extends AbstractMode {
@@ -59,6 +63,20 @@ public class ConnectMode extends AbstractMode {
     @Override
     public void startUp() {
         VirtualDevice virtualDevice = VirtualDevice.getInstance();
+
+        virtualDevice.addMetaDataListener(new WaveformListener() {
+            @Override
+            public void previewChanged(WaveformPreviewUpdate update) {
+
+            }
+
+            @Override
+            public void detailChanged(WaveformDetailUpdate update) {
+                WaveformSharedMemory waveformSharedMemories = memoryProvider.getWaveformSharedMemories(update.player);
+                waveformSharedMemories.updateWaveFrom(update.detail);
+            }
+        });
+
         virtualDevice.addBeatListener(new MasterListener() {
             @Override
             public void masterChanged(DeviceUpdate update) {

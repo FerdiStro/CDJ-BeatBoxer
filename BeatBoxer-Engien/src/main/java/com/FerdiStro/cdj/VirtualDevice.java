@@ -8,10 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.deepsymmetry.beatlink.BeatFinder;
 import org.deepsymmetry.beatlink.MasterListener;
 import org.deepsymmetry.beatlink.VirtualCdj;
-import org.deepsymmetry.beatlink.data.ArtFinder;
-import org.deepsymmetry.beatlink.data.BeatGridFinder;
-import org.deepsymmetry.beatlink.data.MetadataFinder;
-import org.deepsymmetry.beatlink.data.WaveformFinder;
+import org.deepsymmetry.beatlink.data.*;
 
 import java.io.IOException;
 
@@ -93,6 +90,17 @@ public class VirtualDevice {
             log.error(e.toString());
             throw new BecomeMasterException(e.toString());
         }
+    }
+
+    public void addMetaDataListener(WaveformListener waveformListener) {
+        WaveformFinder.getInstance().addWaveformListener(waveformListener);
+
+        MetadataFinder.getInstance().addTrackMetadataListener(new TrackMetadataListener() {
+            @Override
+            public void metadataChanged(TrackMetadataUpdate update) {
+                System.out.println();
+            }
+        });
     }
 
     public void addBeatListener(MasterListener masterListener) {
