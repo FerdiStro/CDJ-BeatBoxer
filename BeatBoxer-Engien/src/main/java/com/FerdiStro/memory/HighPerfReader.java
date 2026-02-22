@@ -86,7 +86,7 @@ public class HighPerfReader implements Runnable {
                     }
                     lastSequence = currentSequence;
                 } else {
-                    Thread.onSpinWait();
+                    Thread.sleep(1);
                 }
             } catch (Exception e) {
                 log.error("Error in Hot-Loop", e);
