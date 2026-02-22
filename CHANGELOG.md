@@ -26,11 +26,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - BeatBoxer-Engine: Direct OnShoots
 - BeatBoxer-Engine: Direct OnShoots on next beat
-- 
+- BeatBoxer-Engine: Write Wave form in new `n_player_wave_form.bin`.
+- BeatBoxer-TUI: Test program which allways read and render `2_player_wave_from.bin`. Can be used for testing and is
+  wave-rendering-PoC
+-
 
 ### Fixed
+
 - BeatBoxer-Engine: Break Loop on`[SHMR] ERROR  Error in Hot-Loop`
-- 
+- BeatBoxer-Engine: Optimize HighPerfReader reading loop (Reduce CPU-lod ~from 100% to ~4%)
+- BeatBoxer-TUI: Remove `hint::spin_loop()` from loops and rewrite writing thread (Reduce CPU-lod from ~200% to ~10%)
 
 ## [0.0.1] - 21.02.2026
 

@@ -2,7 +2,8 @@ use crossbeam_channel::{bounded, Sender};
 use memmap2::MmapMut;
 use std::fs::OpenOptions;
 use std::sync::{Arc, Mutex};
-use std::{env, hint, thread};
+use std::time::Duration;
+use std::{env, thread};
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -215,7 +216,7 @@ impl Memory {
 
             //writing loop
             loop {
-                match rx.try_recv() {
+                match rx.recv() {
                     Ok(data) => {
                         sequence += 1;
                         unsafe {
@@ -274,10 +275,7 @@ impl Memory {
                             std::ptr::write_volatile(seq_ptr, sequence);
                         }
                     }
-                    Err(crossbeam_channel::TryRecvError::Empty) => {
-                        hint::spin_loop();
-                    }
-                    Err(crossbeam_channel::TryRecvError::Disconnected) => {
+                    Err(_) => {
                         break;
                     }
                 }
@@ -328,7 +326,7 @@ impl Memory {
                             guard.sounds = data.sounds;
                         }
                     } else {
-                        hint::spin_loop();
+                        thread::sleep(Duration::from_millis(1));
                     }
                 }
             }
