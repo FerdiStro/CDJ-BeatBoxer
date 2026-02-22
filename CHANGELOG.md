@@ -29,7 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BeatBoxer-Engine: Write Wave form in new `n_player_wave_form.bin`.
 - BeatBoxer-TUI: Test program which allways read and render `2_player_wave_from.bin`. Can be used for testing and is
   wave-rendering-PoC
--
+- BeatBoxer-TUI: Add wave-form rendering to TUI. Not animated yet, but can load `n_player_wave_form.bin` and render this
+  in new CDJ-Section
 
 ### Fixed
 

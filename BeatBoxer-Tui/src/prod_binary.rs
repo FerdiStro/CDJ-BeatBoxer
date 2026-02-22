@@ -56,6 +56,7 @@ fn main() {
     unsafe {
         env::set_var("BEATBOXER_READ_PATH", "fromEngien_shm.bin");
         env::set_var("BEATBOXER_WRITE_PATH", "toEngien_shm.bin");
+        env::set_var("BEATBOXER_READ_CDJ_PATH", "x_player_wave_form.bin");
         env::set_var("BEATBOXER_FILE_EXPLORER_PATH", "/");
     }
 

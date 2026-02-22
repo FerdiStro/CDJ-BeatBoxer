@@ -1,9 +1,25 @@
 use crossbeam_channel::{bounded, Sender};
 use memmap2::MmapMut;
+use ratatui::prelude::Color;
 use std::fs::OpenOptions;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::{env, thread};
+
+//WaveForm  Values
+const WAVEFORM_MAX_SIZE: usize = 150_000;
+const WAVEFORM_HEADER_SIZE: usize = 4;
+const WAVEFORM_BUFFER_0_OFFSET: usize = WAVEFORM_HEADER_SIZE;
+const WAVEFORM_BUFFER_1_OFFSET: usize = WAVEFORM_HEADER_SIZE + 8 + WAVEFORM_MAX_SIZE;
+
+//SharedMemory to engine
+const FILE_SIZE: u64 = 4096;
+
+#[derive(Default)]
+pub struct WaveformData {
+    pub track_id: u32,
+    pub amplitudes: Vec<u32>,
+}
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -170,6 +186,8 @@ impl ReceiveObject {
 #[derive(Debug, Clone)]
 pub struct Memory {
     pub sender: Sender<SendObject>,
+    pub wave_form_cdj_1_terminal_sender: Option<Sender<usize>>,
+    pub wave_form_cdj_2_terminal_sender: Option<Sender<usize>>,
 }
 
 impl Memory {
@@ -182,10 +200,152 @@ impl Memory {
 
         Self::start_reading_thread(reading_path, shared_state);
         let sender = Self::start_writing_thread(writing_path);
-        Self { sender }
+        Self {
+            sender,
+            wave_form_cdj_1_terminal_sender: None,
+            wave_form_cdj_2_terminal_sender: None,
+        }
     }
 
-    const FILE_SIZE: u64 = 4096;
+    pub fn get_data_from_cdj(
+        &mut self,
+        cdj_1_shared_data: Arc<Mutex<WaveformData>>,
+        cdj_2_shared_data: Arc<Mutex<WaveformData>>,
+    ) {
+        let reading_path = env::var("BEATBOXER_READ_CDJ_PATH")
+            .expect("CRITICAL: 'BEATBOXER_READ_CDJ_PATH' not set in ENV!");
+        let cdj_1_path = reading_path.replace("XxX", "1");
+        self.wave_form_cdj_1_terminal_sender =
+            Some(Self::start_wave_reading_trad(cdj_1_path, cdj_1_shared_data));
+
+        let cdj_2_path = reading_path.replace("XxX", "2");
+        self.wave_form_cdj_2_terminal_sender =
+            Some(Self::start_wave_reading_trad(cdj_2_path, cdj_2_shared_data));
+    }
+
+    fn start_wave_reading_trad(
+        wave_file_path: String,
+        thread_shared_data: Arc<Mutex<WaveformData>>,
+    ) -> Sender<usize> {
+        let (tx, rx) = bounded::<usize>(1);
+
+        //move them auto??
+        let scroll_offset = 0;
+        let zoom_width = 975;
+
+        thread::spawn(move || {
+            let file_result = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(wave_file_path);
+
+            let file = match file_result {
+                Ok(file) => file,
+                Err(error) => {
+                    eprintln!("Problem opening the file: {error:?}");
+                    return;
+                }
+            };
+
+            let m_map_result = unsafe { MmapMut::map_mut(&file) };
+
+            let m_map = match m_map_result {
+                Ok(m_map) => m_map,
+                Err(error) => {
+                    eprintln!("Problem opening the file: {error:?}");
+                    return;
+                }
+            };
+
+            let mut last_active_buffer: u8 = 255;
+
+            loop {
+                let current_active_buffer = m_map[0];
+
+                if current_active_buffer != last_active_buffer {
+                    last_active_buffer = current_active_buffer;
+
+                    match rx.recv() {
+                        Ok(terminal_width) => {
+                            let offset = if current_active_buffer == 0 {
+                                WAVEFORM_BUFFER_0_OFFSET
+                            } else {
+                                WAVEFORM_BUFFER_1_OFFSET
+                            };
+
+                            let track_id = u32::from_le_bytes(
+                                m_map[offset..offset + 4].try_into().ok().unwrap(),
+                            );
+                            let len = u32::from_le_bytes(
+                                m_map[offset + 4..offset + 8].try_into().ok().unwrap(),
+                            ) as usize;
+
+                            if len == 0 || len > WAVEFORM_MAX_SIZE || offset + 8 + len > m_map.len()
+                            {
+                                return;
+                            }
+
+                            let raw_data = &m_map[offset + 8..offset + 8 + len];
+
+                            let start = scroll_offset.min(len);
+                            let end = (start + zoom_width).min(len);
+
+                            let visible_data = &raw_data[start..end];
+
+                            if visible_data.is_empty() {
+                                return;
+                            }
+
+                            //zoomed in data
+                            let mut amplitudes = vec![0; terminal_width];
+                            let mut grid_colors = vec![None; terminal_width];
+
+                            for (i, &b) in visible_data.iter().enumerate() {
+                                let mut col = ((i as f64 / visible_data.len() as f64)
+                                    * terminal_width as f64)
+                                    as usize;
+                                col = col.min(terminal_width - 1);
+
+                                // 150 bytes === 1 s
+                                // 0 - 4 amplitud
+                                // value 0 - 31  (0x1F)
+                                let amp = (b & 0x1F) as u32;
+                                if amp > amplitudes[col] {
+                                    amplitudes[col] = amp;
+                                }
+
+                                // 6  is bar (first Beat)
+                                let is_bar = (b & 0x40) != 0;
+
+                                let prev_is_bar = if i > 0 {
+                                    (visible_data[i - 1] & 0x40) != 0
+                                } else {
+                                    false
+                                };
+
+                                if is_bar && !prev_is_bar {
+                                    grid_colors[col] = Some(Color::Red);
+                                } else {
+                                    grid_colors[col] = Some(Color::DarkGray);
+                                }
+                            }
+
+                            if let Ok(mut guard) = thread_shared_data.lock() {
+                                guard.amplitudes = amplitudes;
+                                guard.track_id = track_id;
+                            }
+                        }
+                        Err(_) => {
+                            break;
+                        }
+                    }
+                } else {
+                    thread::sleep(Duration::from_millis(1));
+                }
+            }
+        });
+        tx
+    }
 
     fn start_writing_thread(writing_path: String) -> Sender<SendObject> {
         let (tx, rx) = bounded::<SendObject>(1024);
@@ -199,9 +359,8 @@ impl Memory {
                 .open(writing_path)
                 .expect("Can't open file");
 
-            if file.metadata().unwrap().len() < Self::FILE_SIZE {
-                file.set_len(Self::FILE_SIZE)
-                    .expect("Can't set file size (4096)");
+            if file.metadata().unwrap().len() < FILE_SIZE {
+                file.set_len(FILE_SIZE).expect("Can't set file size (4096)");
             }
 
             let mut m_map = unsafe { MmapMut::map_mut(&file).expect("error on m_map ") };
@@ -211,7 +370,7 @@ impl Memory {
 
             //reset file before using it
             unsafe {
-                std::ptr::write_bytes(ptr, 0, Self::FILE_SIZE as usize);
+                std::ptr::write_bytes(ptr, 0, FILE_SIZE as usize);
             }
 
             //writing loop

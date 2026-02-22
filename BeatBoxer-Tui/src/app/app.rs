@@ -2,7 +2,7 @@ use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
 use crate::app::file_explorer::FileExplorer;
 use crate::app::interactions::keyboard_interactions::{KeyBoardInteractions, MidiColor};
 use crate::app::interactions::knob::Knobs;
-use crate::app::memory::memory::{Memory, ReceiveObject, SoundEntry};
+use crate::app::memory::memory::{Memory, ReceiveObject, SoundEntry, WaveformData};
 use crate::app::render::render::Render;
 use color_eyre::Result;
 use std::path::PathBuf;
@@ -102,10 +102,17 @@ pub struct App {
     pub beat_sequence: [SoundBar; 8],
     // Debug/Console message
     pub debug_message: String,
+    //CDJ-mode
+    pub is_cdj_mode: bool,
+    pub wave_form_cdj_1_shared_data: Arc<Mutex<WaveformData>>,
+    pub wave_form_cdj_2_shared_data: Arc<Mutex<WaveformData>>,
+    pub track_ids: [u32; 2],
+    pub amplitudes: [[u32; 400]; 2],
 }
 
 impl App {
     pub fn update(&mut self) {
+        //Main data
         if let Ok(guard) = self.shared_state.lock() {
             //mapping  4 beat loop to 8 beat
             self.bar_counter = if self.small_counter != self.last_counter {
@@ -145,14 +152,40 @@ impl App {
                 + " SoundBarValue: "
                 + &self.beat_sequence[0].paths[0]
         }
+
+        // Wave Form Data
+        if let Ok(cdj_1) = self.wave_form_cdj_1_shared_data.lock() {
+            self.is_cdj_mode = true;
+
+            self.track_ids[0] = cdj_1.track_id;
+
+            self.amplitudes[0].fill(0);
+            let copy_len = cdj_1.amplitudes.len().min(self.amplitudes[0].len());
+            self.amplitudes[0][..copy_len].copy_from_slice(&cdj_1.amplitudes[..copy_len]);
+        }
+
+        if let Ok(cdj_2) = self.wave_form_cdj_2_shared_data.lock() {
+            self.is_cdj_mode = true;
+
+            self.track_ids[1] = cdj_2.track_id;
+
+            self.amplitudes[1].fill(0);
+            let copy_len = cdj_2.amplitudes.len().min(self.amplitudes[1].len());
+            self.amplitudes[1][..copy_len].copy_from_slice(&cdj_2.amplitudes[..copy_len]);
+        }
     }
 
     pub fn new() -> Result<()> {
+        //Shared-memory (main data)
         let shared_data = Arc::new(Mutex::new(ReceiveObject::default()));
         let thread_shared_data = shared_data.clone();
-
         let memory = Memory::new(thread_shared_data);
 
+        //Wave form shared-memory
+        let wave_form_cdj_1_shared_data = Arc::new(Mutex::new(WaveformData::default()));
+        let wave_form_cdj_2_shared_data = Arc::new(Mutex::new(WaveformData::default()));
+
+        //Render with new App
         Render::run(Self {
             bpm: 0.0,
             small_counter: 0,
@@ -173,6 +206,11 @@ impl App {
             selected_sound: PathBuf::default(),
             beat_sequence: std::array::from_fn(|_| SoundBar::default()),
             debug_message: "".to_string(),
+            is_cdj_mode: true,
+            wave_form_cdj_1_shared_data,
+            wave_form_cdj_2_shared_data,
+            track_ids: [0; 2],
+            amplitudes: [[0; 400]; 2],
         })
     }
 

@@ -40,6 +40,11 @@ impl DevState {
 
     const FILE_IGNORE_WRITING: &str = "ui_states/ignore_writing.bin";
 
+    const BEATBOXER_READ_CDJ_PATH_PROD: &str =
+        "/home/ferdinoond/CDJ-BeatBoxer/BeatBoxer-Engien/x_player_wave_form.bin";
+    const BEATBOXER_READ_CDJ_PATH_DEV: &str =
+        "/Users/maintenance/Projects/CDJ-BeatBoxer/XxX_player_wave_form.bin";
+
     fn get_paths() -> Vec<&'static str> {
         vec![
             "PROD",
@@ -178,6 +183,10 @@ impl DevState {
                                     "BEATBOXER_FILE_EXPLORER_PATH",
                                     DevState::SOUND_LIB_FOLDER_DEV,
                                 )?;
+                                self.update_env_file(
+                                    "BEATBOXER_READ_CDJ_PATH",
+                                    DevState::BEATBOXER_READ_CDJ_PATH_DEV,
+                                )?;
                             }
                             return Ok(DevStatus::DevSel);
                         }
@@ -197,6 +206,10 @@ impl DevState {
                                 self.update_env_file(
                                     "BEATBOXER_FILE_EXPLORER_PATH",
                                     DevState::SOUND_LIB_FOLDER_PROD,
+                                )?;
+                                self.update_env_file(
+                                    "BEATBOXER_READ_CDJ_PATH",
+                                    DevState::BEATBOXER_READ_CDJ_PATH_PROD,
                                 )?;
                             }
                             return Ok(DevStatus::App);
