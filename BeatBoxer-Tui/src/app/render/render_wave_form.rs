@@ -21,10 +21,9 @@ pub fn render_wave_form(
     cdj_number: u32,
     track_id: u32,
     amplitudes: [u32; 400],
+    precise_grid_colors: [Option<Color>; 400],
 ) {
     let terminal_width = area.width as usize;
-
-    
 
     let title = format!(" CDJ-{} Waveform | Track ID: {} ", cdj_number, track_id);
 
@@ -36,6 +35,19 @@ pub fn render_wave_form(
         .paint(|ctx| {
             for i in 0..terminal_width {
                 let amp = amplitudes[i];
+
+                if let Some(_) = precise_grid_colors[i]
+                    && i != 0
+                {
+                    ctx.draw(&ratatui::widgets::canvas::Line {
+                        x1: i as f64,
+                        y1: 0f64,
+                        x2: i as f64,
+                        y2: 31f64,
+                        color: Color::Red,
+                    });
+                    continue;
+                }
 
                 if amp > 0 && amp != 31 {
                     let w_color = if amp >= 24 {

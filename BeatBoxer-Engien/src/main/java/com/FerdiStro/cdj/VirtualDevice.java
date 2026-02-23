@@ -55,6 +55,7 @@ public class VirtualDevice {
         log.info("Start all finders");
         try {
             MetadataFinder.getInstance().start();
+            TimeFinder.getInstance().start();
             ArtFinder.getInstance().start();
             WaveformFinder.getInstance().start();
             BeatGridFinder.getInstance().start();
@@ -92,15 +93,18 @@ public class VirtualDevice {
         }
     }
 
-    public void addMetaDataListener(WaveformListener waveformListener) {
-        WaveformFinder.getInstance().addWaveformListener(waveformListener);
+    public void addTimeFinders(TrackPositionListener trackPositionListener_1, TrackPositionListener trackPositionListener_2) {
+        //only support 2 cdjs with player number 1 & 2
+        TimeFinder.getInstance().addTrackPositionListener(1, trackPositionListener_1);
+        TimeFinder.getInstance().addTrackPositionListener(2, trackPositionListener_2);
+    }
 
-        MetadataFinder.getInstance().addTrackMetadataListener(new TrackMetadataListener() {
-            @Override
-            public void metadataChanged(TrackMetadataUpdate update) {
-                System.out.println();
-            }
-        });
+    public void addBeatGridListener(BeatGridListener beatGridListener) {
+        BeatGridFinder.getInstance().addBeatGridListener(beatGridListener);
+    }
+
+    public void addWaveFromListener(WaveformListener waveformListener) {
+        WaveformFinder.getInstance().addWaveformListener(waveformListener);
     }
 
     public void addBeatListener(MasterListener masterListener) {

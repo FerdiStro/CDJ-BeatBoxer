@@ -1,4 +1,5 @@
-use beatboxer_tui::app::memory::memory::{Memory, ReceiveObject, SendObject};
+use beatboxer_tui::app::memory::objects_main_data::{ReceiveObject, SendObject};
+use beatboxer_tui::app::memory::memory::Memory;
 use beatboxer_tui::dev_state::{DevState, DevStatus};
 use crossterm::event;
 use crossterm::event::{Event, KeyCode};

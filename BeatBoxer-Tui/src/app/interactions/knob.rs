@@ -1,4 +1,5 @@
-use crate::app::memory::memory::{Memory, SendObject};
+use crate::app::memory::memory::Memory;
+use crate::app::memory::objects_main_data::SendObject;
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::prelude::{Color, Style};
 use ratatui::widgets::Block;

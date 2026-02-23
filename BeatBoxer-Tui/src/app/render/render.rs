@@ -127,13 +127,15 @@ impl Render {
         let mut terminal = ratatui::init();
         _app.key_board_interactions.init_midi();
 
-        let wave_form_cdj_1_shared_data_share =  _app.wave_form_cdj_1_shared_data.clone();
-        let wave_form_cdj_2_shared_data_share = _app.wave_form_cdj_2_shared_data.clone();
-
-        _app.memory.get_data_from_cdj(
-            wave_form_cdj_1_shared_data_share,
-            wave_form_cdj_2_shared_data_share,
-        );
+        // let wave_form_cdj_1_shared_data_share =  _app.wave_form_cdj_1_shared_data.clone();
+        //         // let wave_form_cdj_2_shared_data_share = _app.wave_form_cdj_2_shared_data.clone();
+        //         //
+        //         //
+        //         //
+        //         // _app.memory.get_data_from_cdj(
+        //         //     wave_form_cdj_1_shared_data_share,
+        //         //     wave_form_cdj_2_shared_data_share,
+        //         // );
 
         loop {
             terminal.draw(|f| render(f, &mut _app))?;

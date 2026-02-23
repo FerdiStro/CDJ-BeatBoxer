@@ -1,5 +1,5 @@
 use crate::app::app::{App, SoundBar};
-use crate::app::memory::memory::{Memory, SendObject};
+use crate::app::memory::memory::{Memory};
 use crate::app::render::render::Render;
 use ratatui::layout::Rect;
 use ratatui::prelude::{Color, Style};
@@ -7,6 +7,7 @@ use ratatui::widgets::{Block, Paragraph};
 use ratatui::Frame;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use crate::app::memory::objects_main_data::SendObject;
 
 pub trait Button {
     fn label(&self) -> &str;

@@ -2,9 +2,14 @@ use crate::app::buttons::{Button, FirstControlButton, SecondControlButton};
 use crate::app::file_explorer::FileExplorer;
 use crate::app::interactions::keyboard_interactions::{KeyBoardInteractions, MidiColor};
 use crate::app::interactions::knob::Knobs;
-use crate::app::memory::memory::{Memory, ReceiveObject, SoundEntry, WaveformData};
+use crate::app::memory::memory::Memory;
+use crate::app::memory::objects_main_data::{ReceiveObject, SoundEntry};
+use crate::app::memory::objects_wave_from_data::WaveformData;
 use crate::app::render::render::Render;
+
+use crate::app::memory::wave_form_memory::WaveFormMemory;
 use color_eyre::Result;
+use ratatui::style::Color;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
@@ -108,6 +113,8 @@ pub struct App {
     pub wave_form_cdj_2_shared_data: Arc<Mutex<WaveformData>>,
     pub track_ids: [u32; 2],
     pub amplitudes: [[u32; 400]; 2],
+    pub gird_colors: [[Option<Color>; 400]; 2],
+    pub wave_form_memory: WaveFormMemory,
 }
 
 impl App {
@@ -159,9 +166,13 @@ impl App {
 
             self.track_ids[0] = cdj_1.track_id;
 
-            self.amplitudes[0].fill(0);
             let copy_len = cdj_1.amplitudes.len().min(self.amplitudes[0].len());
+
+            self.amplitudes[0].fill(0);
             self.amplitudes[0][..copy_len].copy_from_slice(&cdj_1.amplitudes[..copy_len]);
+
+            self.gird_colors[0].fill(None);
+            self.gird_colors[0][..copy_len].copy_from_slice(&cdj_1.gird_colors[..copy_len]);
         }
 
         if let Ok(cdj_2) = self.wave_form_cdj_2_shared_data.lock() {
@@ -169,21 +180,29 @@ impl App {
 
             self.track_ids[1] = cdj_2.track_id;
 
-            self.amplitudes[1].fill(0);
             let copy_len = cdj_2.amplitudes.len().min(self.amplitudes[1].len());
+
+            self.amplitudes[1].fill(0);
             self.amplitudes[1][..copy_len].copy_from_slice(&cdj_2.amplitudes[..copy_len]);
+
+            self.gird_colors[1].fill(None);
+            self.gird_colors[1][..copy_len].copy_from_slice(&cdj_2.gird_colors[..copy_len]);
         }
     }
 
     pub fn new() -> Result<()> {
         //Shared-memory (main data)
         let shared_data = Arc::new(Mutex::new(ReceiveObject::default()));
-        let thread_shared_data = shared_data.clone();
-        let memory = Memory::new(thread_shared_data);
+        let memory = Memory::new(shared_data.clone());
 
         //Wave form shared-memory
         let wave_form_cdj_1_shared_data = Arc::new(Mutex::new(WaveformData::default()));
         let wave_form_cdj_2_shared_data = Arc::new(Mutex::new(WaveformData::default()));
+
+        let wave_form_memory = WaveFormMemory::new(
+            wave_form_cdj_1_shared_data.clone(),
+            wave_form_cdj_2_shared_data.clone(),
+        );
 
         //Render with new App
         Render::run(Self {
@@ -211,6 +230,8 @@ impl App {
             wave_form_cdj_2_shared_data,
             track_ids: [0; 2],
             amplitudes: [[0; 400]; 2],
+            gird_colors: [[None; 400]; 2],
+            wave_form_memory,
         })
     }
 

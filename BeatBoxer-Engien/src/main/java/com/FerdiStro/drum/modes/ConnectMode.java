@@ -7,9 +7,9 @@ import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import org.deepsymmetry.beatlink.Beat;
 import org.deepsymmetry.beatlink.DeviceUpdate;
 import org.deepsymmetry.beatlink.MasterListener;
-import org.deepsymmetry.beatlink.data.WaveformDetailUpdate;
-import org.deepsymmetry.beatlink.data.WaveformListener;
-import org.deepsymmetry.beatlink.data.WaveformPreviewUpdate;
+import org.deepsymmetry.beatlink.data.*;
+
+import java.nio.ByteBuffer;
 
 
 public class ConnectMode extends AbstractMode {
@@ -59,15 +59,46 @@ public class ConnectMode extends AbstractMode {
         return MODE_NAME;
     }
 
+    private void updateTrackPosition(int playerId, TrackPositionUpdate update) {
+        if (update != null) {
+            WaveformSharedMemory waveformSharedMemories = memoryProvider.getWaveformSharedMemories(playerId);
+
+            long playHeadMs = update.milliseconds;
+            int beatNumber = update.beatNumber;
+            int bpm = update.beatGrid.getBpm(beatNumber);
+
+            waveformSharedMemories.updatePlayHead(playHeadMs, bpm);
+        }
+
+    }
 
     @Override
     public void startUp() {
         VirtualDevice virtualDevice = VirtualDevice.getInstance();
 
-        virtualDevice.addMetaDataListener(new WaveformListener() {
+        //BeatGrid Listeners
+        virtualDevice.addBeatGridListener(gridUpdate -> {
+            int playerId = gridUpdate.player;
+            WaveformSharedMemory waveformSharedMemories = memoryProvider.getWaveformSharedMemories(playerId);
+
+            //Meta-Data
+            long playHeadMs = TimeFinder.getInstance().getTimeFor(playerId);
+            int bpm = gridUpdate.beatGrid.getBpm(playerId);
+            waveformSharedMemories.updatePlayHead(playHeadMs, bpm);
+
+
+            //Grid as RawBytes
+            ByteBuffer rawData = gridUpdate.beatGrid.getRawData();
+            waveformSharedMemories.updateBeatGrid(rawData);
+        });
+
+        //TrackPosition listeners only support 2 cdjs with player number 1 & 2
+        virtualDevice.addTimeFinders((TrackPositionUpdate update) -> updateTrackPosition(1, update), update -> updateTrackPosition(2, update));
+
+        virtualDevice.addWaveFromListener(new WaveformListener() {
             @Override
             public void previewChanged(WaveformPreviewUpdate update) {
-
+                //ignore
             }
 
             @Override
@@ -95,17 +126,13 @@ public class ConnectMode extends AbstractMode {
                 onBeat(beat.getBeatWithinBar());
             }
         });
-
-
         this.virtualDevice = virtualDevice;
     }
-
 
     @Override
     public double getCurrentBpm() {
         return virtualDevice.getMasterBpm();
     }
-
 
     @Override
     public boolean isMaster() {
@@ -118,9 +145,8 @@ public class ConnectMode extends AbstractMode {
         switch (command) {
             case BECOME_MASTER -> becomeMaster();
         }
-
-
     }
-
-
 }
+
+
+

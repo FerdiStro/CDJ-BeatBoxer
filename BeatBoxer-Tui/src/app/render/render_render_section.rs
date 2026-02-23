@@ -1,6 +1,5 @@
 use crate::app::app::App;
 use crate::app::render::render_wave_form::{render_status_button, render_wave_form};
-use color_eyre::owo_colors::OwoColorize;
 use ratatui::layout::Constraint::{Fill, Length, Ratio};
 use ratatui::layout::{Direction, Layout, Rect};
 use ratatui::style::{Color, Style};
@@ -23,10 +22,10 @@ pub fn render_render_section(frame: &mut Frame, area: Rect, app: &mut App) {
 }
 
 fn render_content_cdj(frame: &mut Frame, area: Rect, app: &mut App) {
-    if let Some(sender) = &app.memory.wave_form_cdj_1_terminal_sender {
+    if let Some(sender) = &app.wave_form_memory.wave_form_cdj_1_terminal_sender {
         let _ = sender.try_send(area.width as usize);
     }
-    if let Some(sender) = &app.memory.wave_form_cdj_2_terminal_sender {
+    if let Some(sender) = &app.wave_form_memory.wave_form_cdj_2_terminal_sender {
         let _ = sender.try_send(area.width as usize);
     }
 
@@ -35,8 +34,8 @@ fn render_content_cdj(frame: &mut Frame, area: Rect, app: &mut App) {
         .constraints([Ratio(1, 2), Ratio(1, 2)])
         .areas(area);
 
-    render_wave_form(frame, cdj_1_area, 1, app.track_ids[0], app.amplitudes[0]);
-    render_wave_form(frame, cjd_2_area, 2, app.track_ids[1], app.amplitudes[1]);
+    render_wave_form(frame, cdj_1_area, 1, app.track_ids[0], app.amplitudes[0], app.gird_colors[0]);
+    render_wave_form(frame, cjd_2_area, 2, app.track_ids[1], app.amplitudes[1], app.gird_colors[1]);
 }
 
 fn render_content_offline(frame: &mut Frame, area: Rect, app: &App) {

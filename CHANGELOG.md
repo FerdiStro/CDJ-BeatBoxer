@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Doc BinaryStruct in `Binary-Struct.md`
 - BeatBoxer-Engine: Direct OnShoots
 - BeatBoxer-Engine: Direct OnShoots on next beat
 - BeatBoxer-Engine: Write Wave form in new `n_player_wave_form.bin`.
@@ -31,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   wave-rendering-PoC
 - BeatBoxer-TUI: Add wave-form rendering to TUI. Not animated yet, but can load `n_player_wave_form.bin` and render this
   in new CDJ-Section
+- BeatBoxer-Engine: shared Gird infos in `n_player_wave_form.bin`
+- BeatBoxer-TUI: Read grid infos and paint them
 
 ### Fixed
 

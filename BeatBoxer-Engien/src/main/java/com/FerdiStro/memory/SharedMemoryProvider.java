@@ -32,7 +32,6 @@ public class SharedMemoryProvider {
      */
     private final WaveformSharedMemory[] waveformSharedMemories = new WaveformSharedMemory[2];
 
-
     Thread readerThread = null;
     private RandomAccessFile fromEngienRandomAccessFile;
     private FileChannel fromEngienChannel;
