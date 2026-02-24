@@ -58,10 +58,10 @@ public class WaveformSharedMemory {
         }
     }
 
-    public void updatePlayHead(long playHeadMs, float bpm) {
-        long playHeadIndex = (playHeadMs * 150) / 1000;
-        mappedBuffer.putLong(OFFSET_PLAY_HEAD, playHeadIndex);
+    public void updatePlayHead(long playHeadMs, int bpm) {
+        long playHeadIndex = (playHeadMs * 75) / 1000;
         mappedBuffer.putFloat(OFFSET_BPM, bpm);
+        mappedBuffer.putLong(OFFSET_PLAY_HEAD, playHeadIndex);
     }
 
     public synchronized void updateBeatGrid(ByteBuffer rawData) {

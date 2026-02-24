@@ -34,12 +34,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in new CDJ-Section
 - BeatBoxer-Engine: shared Gird infos in `n_player_wave_form.bin`
 - BeatBoxer-TUI: Read grid infos and paint them
+- BeatBoxer-TUI: Read Player-head and paint grid and waves correct on the player position.
+- Add `build-combined-bin.sh` for building local the combined binary.
 
 ### Fixed
 
 - BeatBoxer-Engine: Break Loop on`[SHMR] ERROR  Error in Hot-Loop`
 - BeatBoxer-Engine: Optimize HighPerfReader reading loop (Reduce CPU-lod ~from 100% to ~4%)
 - BeatBoxer-TUI: Remove `hint::spin_loop()` from loops and rewrite writing thread (Reduce CPU-lod from ~200% to ~10%)
+-
 
 ## [0.0.1] - 21.02.2026
 

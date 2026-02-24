@@ -62,6 +62,7 @@ public class Finder {
                 log.info("Not found, retry again");
                 sleep(5000);
             } catch (SocketException | InterruptedException e) {
+                cdjAttempts++;
                 log.error(e.toString());
             }
         }

@@ -12,6 +12,30 @@ use ratatui::{
 };
 use std::{fs::File, io::stdout, time::Duration};
 
+
+/// DEPRECATED BYRE-MAP CHANGED
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const MAX_WAVEFORM_SIZE: usize = 150_000;
 const HEADER_SIZE: usize = 4;
 const BUFFER_0_OFFSET: usize = HEADER_SIZE;

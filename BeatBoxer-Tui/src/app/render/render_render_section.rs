@@ -1,6 +1,6 @@
 use crate::app::app::App;
 use crate::app::render::render_wave_form::{render_status_button, render_wave_form};
-use ratatui::layout::Constraint::{Fill, Length, Ratio};
+use ratatui::layout::Constraint::{Fill, Length};
 use ratatui::layout::{Direction, Layout, Rect};
 use ratatui::style::{Color, Style};
 use ratatui::widgets::Block;
@@ -31,11 +31,47 @@ fn render_content_cdj(frame: &mut Frame, area: Rect, app: &mut App) {
 
     let [cdj_1_area, cjd_2_area] = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Ratio(1, 2), Ratio(1, 2)])
+        .constraints([Length(5), Length(5)])
         .areas(area);
 
-    render_wave_form(frame, cdj_1_area, 1, app.track_ids[0], app.amplitudes[0], app.gird_colors[0]);
-    render_wave_form(frame, cjd_2_area, 2, app.track_ids[1], app.amplitudes[1], app.gird_colors[1]);
+    render_wave_form(
+        frame,
+        cdj_1_area,
+        1,
+        app.track_ids[0],
+        app.amplitudes[0],
+        app.gird_colors[0],
+    );
+    render_wave_form(
+        frame,
+        cjd_2_area,
+        2,
+        app.track_ids[1],
+        app.amplitudes[1],
+        app.gird_colors[1],
+    );
+
+
+    let center_x = area.x + (area.width / 2);
+
+    frame.render_widget(
+        Block::default().style(Style::default().bg(Color::Red)),
+        Rect {
+            x: center_x,
+            y: cdj_1_area.y,
+            width: 1,
+            height: cdj_1_area.height,
+        },
+    );
+    frame.render_widget(
+        Block::default().style(Style::default().bg(Color::Red)),
+        Rect {
+            x: center_x,
+            y: cjd_2_area.y,
+            width: 1,
+            height: cjd_2_area.height,
+        },
+    );
 }
 
 fn render_content_offline(frame: &mut Frame, area: Rect, app: &App) {

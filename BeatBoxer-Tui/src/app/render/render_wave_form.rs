@@ -51,11 +51,11 @@ pub fn render_wave_form(
 
                 if amp > 0 && amp != 31 {
                     let w_color = if amp >= 24 {
-                        Color::White
+                        Color::Blue
                     } else if amp >= 16 {
                         Color::Cyan
                     } else {
-                        Color::Blue
+                        Color::White
                     };
                     let x = i as f64;
 
@@ -76,6 +76,7 @@ pub fn render_wave_form(
                         color: w_color,
                     });
                 }
+
             }
         });
     frame.render_widget(canvas, area);

@@ -59,6 +59,7 @@ public class ConnectMode extends AbstractMode {
         return MODE_NAME;
     }
 
+
     private void updateTrackPosition(int playerId, TrackPositionUpdate update) {
         if (update != null) {
             WaveformSharedMemory waveformSharedMemories = memoryProvider.getWaveformSharedMemories(playerId);
@@ -93,7 +94,7 @@ public class ConnectMode extends AbstractMode {
         });
 
         //TrackPosition listeners only support 2 cdjs with player number 1 & 2
-        virtualDevice.addTimeFinders((TrackPositionUpdate update) -> updateTrackPosition(1, update), update -> updateTrackPosition(2, update));
+        virtualDevice.addTimeFinders(update -> updateTrackPosition(1, update), update -> updateTrackPosition(2, update));
 
         virtualDevice.addWaveFromListener(new WaveformListener() {
             @Override
@@ -124,6 +125,11 @@ public class ConnectMode extends AbstractMode {
             public void newBeat(Beat beat) {
                 if (!beat.isTempoMaster()) return;
                 onBeat(beat.getBeatWithinBar());
+
+                int playerId = beat.getDeviceNumber();
+                long masterPosMs = TimeFinder.getInstance().getTimeFor(playerId);
+                WaveformSharedMemory waveformSharedMemories = memoryProvider.getWaveformSharedMemories(playerId);
+                waveformSharedMemories.updatePlayHead(masterPosMs, beat.getBpm());
             }
         });
         this.virtualDevice = virtualDevice;
