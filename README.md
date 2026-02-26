@@ -1,4 +1,5 @@
 # CDJ-BeatBoxer
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
@@ -30,6 +31,7 @@ To build just run:
 ```
 
 After that execute the `CDJ-BeatBoxer`:
+
 ```bash
 ./CDJ-BeatBoxer
 ```
@@ -79,6 +81,12 @@ git tag vX.X.X
 git push origin vX.X.X
 ```
 
+### Architecture
+
+Engine: <br>
+![architecture](doc/src/architecture.png)
+<br>
+
 ### Binary-Structs
 
 Communication between TUI → Engine and Engine → TUI uses shared-memory-files. The binar-struct is documented in
@@ -91,7 +99,6 @@ the [Binary-Structs.md](Binary-Structs.md)
 
 
 ---
-
 
 ## Contributors
 

@@ -1,0 +1,278 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.5">
+  <diagram name="Seite-1" id="5SvG90wUQ4kgeQp4Pv0a">
+    <mxGraphModel dx="5903" dy="2917" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-1" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;" value="" vertex="1">
+          <mxGeometry height="890" width="890" x="520" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="BeatBoxer-Engine" vertex="1">
+          <mxGeometry height="80" width="210" x="460" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="80" width="160" x="560" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="DrumMachine" vertex="1">
+          <mxGeometry height="30" width="90" x="595" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-56" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" target="AJQ2HSkrTdy_HeweUtf1-38">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1290" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-57" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-56" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="(send command on memory update)" vertex="1">
+          <mxGeometry relative="1" x="-0.3544" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-59" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.006;entryY=0.323;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-58">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="620" />
+              <mxPoint x="1345" y="620" />
+              <mxPoint x="1345" y="908" />
+              <mxPoint x="1080" y="908" />
+            </Array>
+            <mxPoint x="940" y="550" as="sourcePoint" />
+            <mxPoint x="1080" y="892.5000000000002" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-60" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-59" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="updateBeatGrid() &amp;amp; updatePlayterHead()&amp;nbsp; -&amp;nbsp; (on Listener update)" vertex="1">
+          <mxGeometry relative="1" x="-0.5689" y="1" as="geometry">
+            <mxPoint x="60" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&amp;nbsp;ConnectMode" vertex="1">
+          <mxGeometry height="90" width="90" x="870" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="OfflineMode" vertex="1">
+          <mxGeometry height="30" width="90" x="870" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-29" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="AJQ2HSkrTdy_HeweUtf1-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="395" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-30" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-29" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="get Data (bpm, master, etc.)" vertex="1">
+          <mxGeometry relative="1" x="0.0368" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-33" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="637" y="442.5" />
+              <mxPoint x="885" y="442.5" />
+            </Array>
+            <mxPoint x="637" y="322.5" as="sourcePoint" />
+            <mxPoint x="885" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-35" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-33" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="get Data (bpm, master, etc.)" vertex="1">
+          <mxGeometry relative="1" x="0.0699" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="AbstractMode" vertex="1">
+          <mxGeometry height="40" width="110" x="570" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-13" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.407;entryY=1.014;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="625" y="260" />
+              <mxPoint x="625" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="DrumCommands &amp;amp;&amp;amp; onBeat" vertex="1">
+          <mxGeometry height="30" width="110" x="615" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-18" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="610" y="470" />
+              <mxPoint x="610" y="340" />
+            </Array>
+            <mxPoint x="610" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-31" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-18" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="(trigger differnent memory writes)&amp;nbsp;" vertex="1">
+          <mxGeometry relative="1" x="-0.2111" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="or" vertex="1">
+          <mxGeometry height="30" width="60" x="885" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-23" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.004;entryY=0.587;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="920" y="722.4700000000003" as="sourcePoint" />
+            <mxPoint x="569.5600000000002" y="287.52999999999986" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-27" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="onMemoryUpdate()" vertex="1">
+          <mxGeometry relative="1" x="-0.704" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-22" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SharedMemoryProvider" vertex="1">
+          <mxGeometry height="150" width="180" x="920" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-32" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.746;entryY=0.048;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1047" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-37" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-32" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="sendMemoryUpdate()" vertex="1">
+          <mxGeometry relative="1" x="-0.6103" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-44" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.217;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1241" y="480" />
+              <mxPoint x="960" y="480" />
+            </Array>
+            <mxPoint x="1240.88" y="440" as="sourcePoint" />
+            <mxPoint x="967.9999999999999" y="489.69999999999993" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-45" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-44" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Update Listener" vertex="1">
+          <mxGeometry relative="1" x="0.3279" y="-2" as="geometry">
+            <mxPoint x="44" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-38" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="VirtualDevice" vertex="1">
+          <mxGeometry height="60" width="120" x="1200" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-41" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1320" y="430" />
+            </Array>
+            <mxPoint x="1320" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-43" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-41" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Update Listener(BeatListener, MasterListener, etc.)" vertex="1">
+          <mxGeometry relative="1" x="0.0778" y="-2" as="geometry">
+            <mxPoint x="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-39" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="CDJ-Network" vertex="1">
+          <mxGeometry height="170" width="174" x="1640" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-40" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.002;entryY=0.442;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-39" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1320" y="400" as="sourcePoint" />
+            <mxPoint x="1650" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-42" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-40" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Send Commands (becomMaster, etc.)" vertex="1">
+          <mxGeometry relative="1" x="-0.2848" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-54" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.01;entryY=0.656;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.178;exitY=1.017;exitDx=0;exitDy=0;exitPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="590.9" y="340" />
+              <mxPoint x="590.9" y="519" />
+            </Array>
+            <mxPoint x="590.4799999999999" y="350.67999999999995" as="sourcePoint" />
+            <mxPoint x="869.9999999999999" y="519.36" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-55" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-54" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="onMemoryUpdate()" vertex="1">
+          <mxGeometry relative="1" x="0.102" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-58" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="WaveformSharedMemory" vertex="1">
+          <mxGeometry height="65" width="170" x="890" y="887.5" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-66" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.979;entryY=0.466;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="736" />
+              <mxPoint x="710" y="736" />
+            </Array>
+            <mxPoint x="379.95000000000005" y="774.9650000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-67" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-66" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="writeToMemory()" vertex="1">
+          <mxGeometry relative="1" x="0.3782" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-68" parent="1" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document" value="&lt;pre style=&quot;color: rgb(79, 85, 96); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;span style=&quot;color: rgb(152, 195, 121);&quot;&gt;fromEngien_shm.bin&lt;/span&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="120" width="136" x="206" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-74" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="AJQ2HSkrTdy_HeweUtf1-71">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-75" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-74" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="(read&amp;nbsp;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.6904" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-69" parent="1" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document" value="&lt;div style=&quot;color: rgb(171, 178, 191);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;span style=&quot;color: rgb(152, 195, 121);&quot;&gt;toEngien_shm.bin&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="140" x="206" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-71" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="HighPerfReader" vertex="1">
+          <mxGeometry height="60" width="120" x="595" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-72" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.017;entryY=0.579;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="810" />
+              <mxPoint x="900" y="787" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-73" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-72" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="(update Consumer)" vertex="1">
+          <mxGeometry relative="1" x="-0.5391" y="-1" as="geometry">
+            <mxPoint x="24" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-78" parent="1" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document" value="&lt;div style=&quot;color: rgb(171, 178, 191);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;span style=&quot;color: rgb(152, 195, 121);&quot;&gt;1_player_wave_form.bin&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="170" x="350" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-80" parent="1" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document" value="&lt;div style=&quot;color: rgb(171, 178, 191);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;span style=&quot;color: rgb(152, 195, 121);&quot;&gt;2_player_wave_form.bin&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="170" x="350" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-82" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.996;entryY=0.638;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-78">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="1113" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-84" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-82" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="commitToInactiveBufferAndSwap()" vertex="1">
+          <mxGeometry relative="1" x="0.3725" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-83" edge="1" parent="1" source="AJQ2HSkrTdy_HeweUtf1-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="AJQ2HSkrTdy_HeweUtf1-80">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1010" y="1245" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AJQ2HSkrTdy_HeweUtf1-87" connectable="0" parent="AJQ2HSkrTdy_HeweUtf1-83" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="commitToInactiveBufferAndSwap()" vertex="1">
+          <mxGeometry relative="1" x="0.4767" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
