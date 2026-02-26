@@ -64,6 +64,8 @@ dependencies {
   implementation("org.deepsymmetry:beat-link:8.0.0")
 
   implementation("ddf.minim:ddf.minim:2.2.0")
+
+    implementation("tools.jackson.core:jackson-databind:3.1.0")
 }
 
 application {

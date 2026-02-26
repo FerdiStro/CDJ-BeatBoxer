@@ -1,5 +1,8 @@
 package com.FerdiStro.drum.modes;
 
+import com.FerdiStro.drum.modes.pattern.AbstractPatternSystem;
+import com.FerdiStro.drum.modes.pattern.OfflinePatternSystem;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +42,11 @@ public class OfflineMode extends AbstractMode {
     private void onBeat() {
         super.onBeat(bar + 1);
         bar = (byte) ((bar + 1) & 3);
+    }
+
+    @Override
+    protected AbstractPatternSystem getImplementedPatternSystem() {
+        return new OfflinePatternSystem();
     }
 
 

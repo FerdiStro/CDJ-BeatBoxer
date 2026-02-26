@@ -1,9 +1,9 @@
 package com.FerdiStro;
 
+import com.FerdiStro.drum.DrumMachine;
 import com.FerdiStro.drum.modes.AbstractMode;
 import com.FerdiStro.drum.modes.ConnectMode;
 import com.FerdiStro.drum.modes.OfflineMode;
-import com.FerdiStro.drum.DrumMachine;
 import com.FerdiStro.memory.SharedMemoryProvider;
 import com.FerdiStro.network.Finder;
 import com.FerdiStro.network.NetWorkInfo;
@@ -20,7 +20,7 @@ public class Main {
     protected static final Logger log = LogManager.getLogger();
 
 
-    private static final int MAX_ATTEMPTS = 2;
+    private static final int MAX_ATTEMPTS = 0;
 
     public static void main(String[] args) {
         log.info(LogUtils.LINE_SEPARATOR);

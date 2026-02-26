@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BeatBoxer-TUI: Read grid infos and paint them
 - BeatBoxer-TUI: Read Player-head and paint grid and waves correct on the player position.
 - Add `build-combined-bin.sh` for building local the combined binary.
+- BeatBoxer-Engine: Add Pattern Recommendation-System
 
 ### Fixed
 

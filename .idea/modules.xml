@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.main.iml" filepath="$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.test.iml" filepath="$PROJECT_DIR$/.idea/modules/BeatBoxer-Engien.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/BeatBoxer-Tui/BeatBoxer-Tui.iml" filepath="$PROJECT_DIR$/BeatBoxer-Tui/BeatBoxer-Tui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.FerdiStro.BeatBoxer-Engien.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.FerdiStro.BeatBoxer-Engien.test.iml" />
     </modules>
   </component>
 </project>

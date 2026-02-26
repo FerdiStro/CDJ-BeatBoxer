@@ -1,11 +1,13 @@
 package com.FerdiStro.memory.objects;
 
 import com.FerdiStro.drum.beat.Beat;
+import com.FerdiStro.drum.modes.pattern.objects.PatternMetaData;
 import com.FerdiStro.memory.exceptions.ByteSizeValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.MappedByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +27,7 @@ public class TransferObject {
     private static final int POSITION_TOTAL_COUNTER = 24;
     private static final int POSITION_SOUNDS = 32;
     private static final int BLOCK_SOUNDS_SIZE = 264;
+    private static final int POSITION_PATTERNS = 2672;
 
 
     @Getter
@@ -47,6 +50,44 @@ public class TransferObject {
         this.totalCounter = totalCounter;
         this.master = master;
         this.transferBeatData = fromBeats(beats);
+    }
+
+    /**
+     * Is used to write PatternMetaData in the buffer.Not set the sequence id. Is only be updated on the next real Memory update
+     */
+    public static void writePatternToBuffer(int patternIndex, PatternMetaData patternMetaData, MappedByteBuffer buffer) {
+        if (buffer.isReadOnly()) {
+            log.error("Buffer is read only");
+            return;
+        }
+        buffer.position(0);
+        int positionPointer = POSITION_PATTERNS + 8 * patternIndex;
+        buffer.putLong(positionPointer, patternMetaData.patternId());
+
+    }
+
+    private static @NonNull Map<String, Integer> getStringIntegerMap(Beat[] beats) {
+        Map<String, Integer> soundMap = new HashMap<>();
+
+        for (int beatIndex = 0; beatIndex < beats.length; beatIndex++) {
+            Beat beat = beats[beatIndex];
+            if (beat == null) continue;
+
+            String[] samplerNames = beat.getSamplersNames();
+            if (samplerNames == null) continue;
+
+            for (String soundPath : samplerNames) {
+                if (soundPath != null) {
+                    int currentMask = soundMap.getOrDefault(soundPath, 0);
+
+
+                    currentMask |= (1 << beatIndex);
+
+                    soundMap.put(soundPath, currentMask);
+                }
+            }
+        }
+        return soundMap;
     }
 
     public void writeMappedByteBuffer(MappedByteBuffer buffer, long sequence) {
@@ -90,26 +131,7 @@ public class TransferObject {
             throw new ByteSizeValidationException("Beats-Array", (byte) 8, (byte) beats.length);
         }
 
-        Map<String, Integer> soundMap = new HashMap<>();
-
-        for (int beatIndex = 0; beatIndex < beats.length; beatIndex++) {
-            Beat beat = beats[beatIndex];
-            if (beat == null) continue;
-
-            String[] samplerNames = beat.getSamplersNames();
-            if (samplerNames == null) continue;
-
-            for (String soundPath : samplerNames) {
-                if (soundPath != null) {
-                    int currentMask = soundMap.getOrDefault(soundPath, 0);
-
-
-                    currentMask |= (1 << beatIndex);
-
-                    soundMap.put(soundPath, currentMask);
-                }
-            }
-        }
+        Map<String, Integer> soundMap = getStringIntegerMap(beats);
 
         TransferBeatData[] result = new TransferBeatData[10];
         List<String> keys = new ArrayList<>(soundMap.keySet());
@@ -125,7 +147,6 @@ public class TransferObject {
 
         return result;
     }
-
 
     @AllArgsConstructor
     public static class TransferBeatData {

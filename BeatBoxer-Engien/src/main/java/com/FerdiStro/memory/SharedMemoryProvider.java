@@ -1,5 +1,6 @@
 package com.FerdiStro.memory;
 
+import com.FerdiStro.drum.modes.pattern.objects.PatternMetaData;
 import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import com.FerdiStro.memory.bus.MemoryUpdateListener;
 import com.FerdiStro.memory.objects.ReceivedData;
@@ -185,6 +186,16 @@ public class SharedMemoryProvider {
         notifyMemoryUpdateListeners(MemoryUpdateCommand.DEFAULT);
     }
 
+
+    public void commitPatterns(PatternMetaData[] patternMetaData) {
+        for (int i = 0; i != patternMetaData.length; i++) {
+            PatternMetaData data = patternMetaData[i];
+            if (data == null) {
+                return;
+            }
+            TransferObject.writePatternToBuffer(i, data, fromEngienBuffer);
+        }
+    }
 
     public void writeToMemory(TransferObject transferObject) {
         if (fromEngienBuffer == null) {

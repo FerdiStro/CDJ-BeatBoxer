@@ -1,0 +1,26 @@
+{
+  "patterns": [
+    {
+      "patternId": "1",
+      "name": "Drum 01",
+      "modes": [
+        "OFFLINE",
+        "CONNECT"
+      ]
+    },
+    {
+      "patternId": "2",
+      "name": "Drum Offline",
+      "modes": [
+        "OFFLINE"
+      ]
+    },
+    {
+      "patternId": "3",
+      "name": "Drum Online",
+      "modes": [
+        "CONNECT"
+      ]
+    }
+  ]
+}

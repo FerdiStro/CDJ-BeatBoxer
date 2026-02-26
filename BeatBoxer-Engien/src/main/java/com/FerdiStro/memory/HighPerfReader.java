@@ -49,7 +49,6 @@ public class HighPerfReader implements Runnable {
                     break;
                 } else {
                     Thread.sleep(1000);
-                    Thread.onSpinWait();
                 }
             } catch (Exception e) {
                 log.error("Error on staring Reader:", e);

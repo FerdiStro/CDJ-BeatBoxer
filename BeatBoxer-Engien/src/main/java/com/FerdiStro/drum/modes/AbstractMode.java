@@ -4,6 +4,8 @@ import com.FerdiStro.LogUtils;
 import com.FerdiStro.drum.DrumMachine;
 import com.FerdiStro.drum.command.DrumCommand;
 import com.FerdiStro.drum.command.DrumCommandObject;
+import com.FerdiStro.drum.modes.pattern.AbstractPatternSystem;
+import com.FerdiStro.drum.modes.pattern.objects.PatternMetaData;
 import com.FerdiStro.memory.SharedMemoryProvider;
 import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import com.FerdiStro.memory.bus.MemoryUpdateListener;
@@ -33,6 +35,10 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     private Long totalCounter = 1L;
     @Getter
     private byte smallCounter = 0;
+
+    private AbstractPatternSystem patternSystem;
+
+    protected abstract AbstractPatternSystem getImplementedPatternSystem();
 
     public abstract String getName();
 
@@ -75,6 +81,12 @@ public abstract class AbstractMode implements MemoryUpdateListener {
         log.info("Start:  {}", getName());
         log.info(LogUtils.LINE_SEPARATOR);
         this.memoryProvider = SharedMemoryProvider.getInstance();
+        this.patternSystem = getImplementedPatternSystem();
+
+        Thread patternThread = new Thread(this.patternSystem);
+        patternThread.setPriority(Thread.NORM_PRIORITY);
+        patternThread.setName("PATT");
+        patternThread.start();
     }
 
     public void onMasterChange() {
@@ -102,6 +114,11 @@ public abstract class AbstractMode implements MemoryUpdateListener {
     }
 
     public void sendMemoryUpdate() {
+        if (patternSystem.isChanged()) {
+            PatternMetaData[] searchedPatternMetaData = this.patternSystem.getSearchedPatternMetaData();
+            this.memoryProvider.commitPatterns(searchedPatternMetaData);
+        }
+
         TransferObject transferObject = new TransferObject(getCurrentBpm(), getSmallCounter(), getTotalCounter(), isMaster(), drumMachineCommandLine.getSmallGrid());
         this.memoryProvider.writeToMemory(transferObject);
     }

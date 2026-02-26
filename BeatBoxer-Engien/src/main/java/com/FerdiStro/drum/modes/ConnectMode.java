@@ -2,6 +2,8 @@ package com.FerdiStro.drum.modes;
 
 
 import com.FerdiStro.cdj.VirtualDevice;
+import com.FerdiStro.drum.modes.pattern.AbstractPatternSystem;
+import com.FerdiStro.drum.modes.pattern.ConnectPatternSystem;
 import com.FerdiStro.memory.WaveformSharedMemory;
 import com.FerdiStro.memory.bus.MemoryUpdateCommand;
 import org.deepsymmetry.beatlink.Beat;
@@ -52,6 +54,11 @@ public class ConnectMode extends AbstractMode {
             waitMasterUpdate.setName("WaitM");
             waitMasterUpdate.start();
         }
+    }
+
+    @Override
+    protected AbstractPatternSystem getImplementedPatternSystem() {
+        return new ConnectPatternSystem();
     }
 
     @Override
