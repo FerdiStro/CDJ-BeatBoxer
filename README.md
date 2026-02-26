@@ -84,7 +84,7 @@ git push origin vX.X.X
 ### Architecture
 
 Engine: <br>
-[architecture.drawio](doc/src/architecture.drawio)
+![architecture](doc/src/architecture.png)
 <br>
 
 ### Binary-Structs
