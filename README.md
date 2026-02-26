@@ -1,4 +1,7 @@
 # CDJ-BeatBoxer
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 A drum machine fully synced to your CDJs via ProDJ Link using beat-link. Better version
 of [CDJ-BeatBox](https://github.com/FerdiStro/CDJ-BeatBox).Compile and run in a single bin for performative TUI build in
@@ -93,6 +96,20 @@ the [Binary-Structs.md](Binary-Structs.md)
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://pharrellkaim.github.io"><img src="https://avatars.githubusercontent.com/u/79710229?v=4?s=100" width="100px;" alt="Pharrell Kaim"/><br /><sub><b>Pharrell Kaim</b></sub></a><br /><a href="https://github.com/FerdiStro/CDJ-BeatBoxer/commits?author=PharrellKaim" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
