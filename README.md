@@ -1,9 +1,5 @@
 # CDJ-BeatBoxer
 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
 A drum machine fully synced to your CDJs via ProDJ Link using beat-link. Better version
 of [CDJ-BeatBox](https://github.com/FerdiStro/CDJ-BeatBox).Compile and run in a single bin for performative TUI build in
 Rust.
@@ -87,6 +83,12 @@ Engine: <br>
 ![architecture](doc/src/architecture.png)
 <br>
 
+### TUI look
+
+(may outdated) <br>
+![architecture](doc/src/BeatBoxer-Tui.png)
+<br>
+
 ### Binary-Structs
 
 Communication between TUI → Engine and Engine → TUI uses shared-memory-files. The binar-struct is documented in
@@ -102,6 +104,9 @@ the [Binary-Structs.md](Binary-Structs.md)
 
 ## Contributors
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
