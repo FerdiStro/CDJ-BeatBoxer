@@ -145,7 +145,7 @@ fn main() -> std::io::Result<()> {
 
         if needs_redraw {
             terminal.draw(|frame| {
-                let area = frame.size();
+                let area = frame.area();
                 let layout = Layout::default()
                     .direction(Direction::Vertical)
                     .constraints([Constraint::Length(10), Constraint::Min(0)])
